@@ -1,13 +1,14 @@
-# Blog: MY-PROJECT-TITLE
+# Blog: Music Analysis Tool
 
-**MY-NAME**
+**Patrick Ferry**
 
 ## My First Blog Entry
 
-This is my first blog entry.
-
-The blog is written in [markdown](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet).
-Markdown is a simple text-based mark-up language.
+My first aim was to gather some songs to play around with and see how they read and what kind of information they hold. 
+I wrote  a small script using PyTube and ffmpeg which takes a youtube url and downloads a song and converts it into WAV 
+format. I am aware that these songs may not be of the best quality but they should be enough to begin with. I created a 
+jupyter notebook for my code playground. I also created a Latex file for holding any research and formulae that I would 
+like to refer back to. 
 
 ## My Second Blog Entry
 

@@ -1,0 +1,34 @@
+\documentclass[a4paper]{article}
+\usepackage{url}
+
+\begin{document}
+    I am currently researching how to find the BPM of a song below are some formula I was recommended.
+    \section{On-Set Detection}
+        \subsection{Sound energy algorithm}
+            From link below \\
+            The algorithm divides the data into blocks of samples and compares the energy of a block
+            with the energy of a preceding window of blocks. The energy of a block is used to detect a beat. If the
+            energy is above a certain threshold then the block is considered to contain a beat. The threshold is defined
+            starting from the average energy of the window of blocks preceding the one we are analyzing.\\
+            If a block j is made of 1024 samples and the song is stereo, its energy can be computed as:
+            \[E_j = \sum_{i=0}^{1023}left[i]^2 + right[i]^2  \]
+            This technique was deemed imprecise by the article.
+
+
+    \section{Terms}
+        If any are left blank go look em up!\\
+         \textbf{Sampling Frequency} - the number of samples per second in a Sound \\
+         \textbf{Discrete wavelet transform} - \\
+         \textbf{} - \\
+         \textbf{} - \\
+         \textbf{} - \\
+         \textbf{} - \\
+
+    \section{Links to research}
+        \url{http://mziccard.me/2015/05/28/beats-detection-algorithms-1/}\\
+        \url{http://archive.gamedev.net/archive/reference/programming/features/beatdetection/index.html}\\
+        \url{http://shepazu.github.io/Audio-EQ-Cookbook/audio-eq-cookbook.html}\\
+        \url{}\\
+        \url{}\\
+        \url{}\\
+\end{document}
