@@ -1,17 +1,23 @@
 import matplotlib.pyplot as plt
+from scipy.io import wavfile
+from scipy import signal
 import numpy as np
-import wave
-import sys
+import librosa
 
-song = spf = wave.open('../Songs/Synthesia/MoonlightSonata1.wav','r')
+fs, data = wavfile.read('../Songs/kiss_the_rain.wav')
+y, sr = librosa.load('../Songs/kiss_the_rain.wav')
 
-signal = spf.readframes(-1)
-# signal = np.fromstring(signal, 'Int16')
-# if spf.getnchannels() == 2:
-#     print ('Just mono files')
-#     sys.exit(0)
+def librosaBPM(wave, samplerate):
+    onset_env = librosa.onset.onset_strength(wave, sr=samplerate)
+    tempo = librosa.beat.tempo(onset_envelope=onset_env, sr=samplerate)
+    return(tempo)
 
-plt.figure(1)
-plt.title('Signal Wave...')
-plt.plot(signal)
-plt.show()
+x = (librosaBPM(y, sr))
+print(x)
+# librosa.beat.tempo
+
+
+# plt.figure(1)
+# plt.title('Signal Wave...')
+# plt.plot(signal)
+# plt.show()
