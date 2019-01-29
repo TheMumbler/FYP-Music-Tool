@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import wave
 import sys
-
+import numba
 song = spf = wave.open('../Songs/Synthesia/MoonlightSonata1.wav','r')
 
 signal = spf.readframes(-1)
