@@ -1,27 +1,27 @@
 from pytube import YouTube
-# import subprocess
-
+import subprocess
+# TODO: Make proper functions of below
 # TODO: READ INPUT (URL)
-
-
-def progress_function(stream, chunk, file_handle, bytes_remaining):
-    print(round((1 - bytes_remaining / video.filesize) * 100, 3), '% done...')
-
+link = input()
 
 # yt = YouTube("https://www.youtube.com/watch?v=mTwoMGCtPT8")
-yt = YouTube("https://www.youtube.com/watch?v=LSwXh1Y5thY")  # on_progress_callback=progress_function
+yt = YouTube("https://www.youtube.com/watch?v=JzIK5FaC38w")
+
+# yt = YouTube("https://www.youtube.com/watch?v=LSwXh1Y5thY")
 
 # TODO: DOWNLOAD SONG
-
-
-# TODO: CONVERT SONG
 
 print(yt.streams.all())
 t = yt.streams.filter(only_audio=True).all()
 print(t)
 title = yt.title
+print(title)
 t[0].download()
+print("ffmpeg -i \"" + title + ".mp4\" \"" + title + ".wav\"")
+# TODO: CONVERT SONG
+subprocess.call("ffmpeg -i \"" + title + ".mp4\" \"" + title + ".wav\"")
 
+# ffmpeg -i my_video.mp4 -c copy -map 0:a output_audio.mp4
 # TODO: REMOVE OLD SONG
 
 

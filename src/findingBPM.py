@@ -8,7 +8,7 @@ fs, data = wavfile.read('../Songs/kiss_the_rain.wav')
 y, sr = librosa.load('../Songs/kiss_the_rain.wav')
 
 def librosaBPM(wave, samplerate):
-    onset_env = librosa.onset.onset_strength(wave, sr=samplerate)
+    onset_env = librosa.onset.onset_detect(wave, sr=samplerate)
     tempo = librosa.beat.tempo(onset_envelope=onset_env, sr=samplerate)
     return(tempo)
 
