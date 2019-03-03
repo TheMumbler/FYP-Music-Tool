@@ -2,6 +2,8 @@ from scipy import signal
 import matplotlib.pyplot as plt
 import scipy.io.wavfile
 import numpy as np
+from utils import midi_to_pitch
+
 
 sr, song = scipy.io.wavfile.read('../Songs/river_flows_in_you_mono.wav')
 song = song[:20*sr]
@@ -55,7 +57,7 @@ print(len(Zxx))
 # print(x[0][2])
 # print(type(x[2]))
 
-plt.xticks(np.arange(0, 10, 1))
+
 # plt.pcolormesh(t, f, np.log(np.abs(Zxx)), vmin=1)
 plt.pcolormesh(np.abs(Zxx))
 plt.title('STFT Magnitude')
