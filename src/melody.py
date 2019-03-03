@@ -4,7 +4,7 @@ import scipy.io.wavfile
 import numpy as np
 
 sr, song = scipy.io.wavfile.read('../Songs/river_flows_in_you_mono.wav')
-song = song[:10*sr]
+song = song[:20*sr]
 
 # # take first ten seconds  ## THIS WAS A PLAYGROUND FOR LOOKING AT DIFFERENT WINDOWS
 # song = song[sr:10*sr]
@@ -48,14 +48,16 @@ song = song[:10*sr]
 
 print(len(song)/128)
 print(len(song)/sr)
+# 128 is each hop , 8192 is how many freq bins there is
 f, t, Zxx = signal.stft(song, 128, nfft=8192)
 print(len(Zxx))
 # print(len(x[2][0]))
 # print(x[0][2])
 # print(type(x[2]))
 
+plt.xticks(np.arange(0, 10, 1))
 # plt.pcolormesh(t, f, np.log(np.abs(Zxx)), vmin=1)
-plt.pcolormesh(np.abs(Zxx), vmin=1)
+plt.pcolormesh(np.abs(Zxx))
 plt.title('STFT Magnitude')
 plt.ylabel('Frequency [Hz]')
 plt.xlabel('Time [sec]')
