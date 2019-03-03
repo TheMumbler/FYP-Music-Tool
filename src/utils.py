@@ -10,8 +10,11 @@ def note_pitch_midi(tuning=440):
     note_names = note_names * 10
     for midi_num, name in zip(range(12, len(note_names)), note_names):
         # print(name + str((i//12)-1), midi_to_pitch(i))
+        # print(midi_num)
         note_info[name + str((midi_num // 12) - 1)] = [midi_to_pitch(midi_num, tuning), midi_num]
     return note_info
 
 
-print(note_pitch_midi()["A4"])
+d = note_pitch_midi()
+# for key in d:
+#     print(key, d[key])
