@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import scipy.io.wavfile
 import numpy as np
 from utils import midi_to_pitch
+from utils import note_pitch_midi
 
 
 # sr, song = scipy.io.wavfile.read('../Songs/river_flows_in_you_mono.wav')
@@ -59,7 +60,7 @@ print(len(Zxx))
 
 
 def bucket_size():
-    for i in np.arange(-0.5, 108.5, 1):
+    for i in np.arange(11.5, 108.5, 1):  # Maybe change 11.5 to zero?
         # print(midi_to_pitch(i+.5))
         # print(i+.5)
         yield int(i+.5), midi_to_pitch(i), midi_to_pitch(i+1)
@@ -82,7 +83,6 @@ for row in range(len(Zxx)):
 # print(x[0][2])
 # print(type(x[2]))
 
-
 # plt.pcolormesh(t, f, np.log(np.abs(Zxx)), vmin=1)
 plt.pcolormesh(np.abs(new_full))
 plt.title('STFT Magnitude')
@@ -95,3 +95,7 @@ plt.title('STFT Magnitude')
 plt.ylabel('Frequency [Hz]')
 plt.xlabel('Time [sec]')
 plt.show()
+
+d = note_pitch_midi()
+for key in d:
+    print(key, d[key])
