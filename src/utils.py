@@ -2,6 +2,9 @@ from math import floor, log2
 import numpy as np
 
 
+
+
+
 def midi_to_pitch(note, tuning=440):
     """Takes a midi number and returns the relative frequency. Has a tuning parameter with defaults to 440"""
     return (2 ** ((note - 69) / 12)) * tuning
@@ -22,6 +25,7 @@ def note_pitch_midi(tuning=440):
 def log_compression(spect, y=1):
     for i in range(len(spect[0])):
         spect[:, i] = np.log(spect[:, i] * y + 1)
+    return spect
 
 
 def bucket_size():
@@ -53,10 +57,10 @@ def refined_log_freq_spec(spect):
     # TODO: This function breaks if freq_to_buckets cents is set to anything small as it tries to get negative index
     song_length = len(spect[0])
     freq_range = len(spect)
-    print(spect.shape)
+    # print(spect.shape)
     new_full = np.zeros(shape=(freq_to_bucket(freq_range-1), song_length))
-    print(new_full.shape)
+    # print(new_full.shape)
     for index in range(1, len(spect)):
         new_full[freq_to_bucket(index)-1] = new_full[freq_to_bucket(index)-1] + spect[index]
-        print(freq_to_bucket(index))
+        # print(freq_to_bucket(index))
     return new_full
