@@ -6,8 +6,8 @@ from utils import *
 from math import log
 
 
-# sr, song = scipy.io.wavfile.read('../Songs/river_flows_in_you_mono.wav')
-sr, song = scipy.io.wavfile.read('../Songs/fur_elise.wav')
+sr, song = scipy.io.wavfile.read('../Songs/river_flows_in_you_mono.wav')
+# sr, song = scipy.io.wavfile.read('../Songs/fur_elise.wav')
 # sr, song = scipy.io.wavfile.read('../Songs/Deadmau5 - Strobe (Evan Duffy Piano Cover).wav')
 song = song[:5*sr]
 plt.plot(song)
@@ -63,17 +63,19 @@ win_len = 2048
 w = scipy.signal.get_window("hann", win_len)
 hop_size = 128
 short = np.zeros(shape=(4096, 1706))
-totes = np.zeros(shape=win_len)
+totes = 0
 
 for i in range(0, len(song)-win_len, 128):
     windowed = song[i:i+win_len]*w
     this = np.fft.fft(windowed, n=8192)
-    totes += windowed
+    totes += np.sum(windowed)
     short[:, (i//128)-1] = np.abs(this[:len(this)//2])
 
-# for j in range(len(short)):
-#     short[:, j] = 2*(short[:, j]/totes)
-short = log_compression(short)
+print(short.shape)
+for j in range(len(short[0])):
+    short[:, j] = 2*(short[:, j]/totes)
+
+# short = log_compression(short)
 # l = np.array(l)
 
 
@@ -90,8 +92,8 @@ peaks = np.empty(shape=Zxx.shape)
 #     peaks[:, i] = 2*(np.abs(Zxx[:, i])/test)
 
 # new_f = log_freq_spec(Zxx)
-# new_ref = refined_log_freq_spec(Zxx)
-# new_ref = log_compression(new_ref)
+new_ref = refined_log_freq_spec(short)
+# new_ref = log_compression(short)
 
 # # plt.pcolormesh(t, f, np.log(np.abs(Zxx)), vmin=1)
 # plt.pcolormesh(np.abs(new_f))
@@ -100,11 +102,11 @@ peaks = np.empty(shape=Zxx.shape)
 # plt.xlabel('Time [sec]')
 # plt.show()
 # #
-# plt.pcolormesh(np.abs(new_ref))
-# plt.title('Refined Logged')
-# plt.ylabel('Frequency [Hz]')
-# plt.xlabel('Time [sec]')
-# plt.show()
+plt.pcolormesh(np.abs(new_ref))
+plt.title('Refined Logged')
+plt.ylabel('Frequency [Hz]')
+plt.xlabel('Time [sec]')
+plt.show()
 
 plt.pcolormesh(np.abs(short))
 plt.title('MY BOY')
