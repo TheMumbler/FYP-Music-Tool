@@ -6,8 +6,8 @@ from utils import *
 from math import log
 
 
-sr, song = scipy.io.wavfile.read('../Songs/river_flows_in_you_mono.wav')
-# sr, song = scipy.io.wavfile.read('../Songs/fur_elise.wav')
+# sr, song = scipy.io.wavfile.read('../Songs/river_flows_in_you_mono.wav')
+sr, song = scipy.io.wavfile.read('../Songs/fur_elise.wav')
 # sr, song = scipy.io.wavfile.read('../Songs/Deadmau5 - Strobe (Evan Duffy Piano Cover).wav')
 song = song[:5*sr]
 plt.plot(song)
@@ -59,25 +59,52 @@ print(len(song)/sr)
 f, t, Zxx = signal.stft(song, fs=sr, nperseg=2048, nfft=8192)
 
 
+# TODO: Move this a into my_stft function
 win_len = 2048
 w = scipy.signal.get_window("hann", win_len)
 hop_size = 128
-short = np.zeros(shape=(4096, 1706))
+short = np.zeros(shape=(4096, (len(song)-win_len)//128))
 totes = 0
 
 for i in range(0, len(song)-win_len, 128):
+    # TODO: Fix the normalisation peak picking
     windowed = song[i:i+win_len]*w
     this = np.fft.fft(windowed, n=8192)
-    totes += np.sum(windowed)
-    short[:, (i//128)-1] = np.abs(this[:len(this)//2])
-
+    totes = np.sum(windowed)
+    print(i//128)
+    this = np.abs(this[:len(this)//2])
+    this = 2*(this/totes)
+    short[:, (i//128)-1] = this
+# This is the peak picking for
 print(short.shape)
-for j in range(len(short[0])):
-    short[:, j] = 2*(short[:, j]/totes)
+# for j in range(len(short[0])):
+#     short[:, j] = 2*(short[:, j]/totes)
 
-# short = log_compression(short)
+short = log_compression(short)
 # l = np.array(l)
 
+# Parabolic interpolation
+
+
+def parabolic_ip(freq):
+    # TODO : Fix this, too slow. Look at book again
+    for p in range(1, len(freq)-1):
+        if freq[p - 1] > 0 and freq[p] > 0 and freq[p+1] > 0:
+            a1 = 20*log(freq[p-1], 10)
+            a2 = 20*log(freq[p], 10)
+            a3 = 20*log(freq[p+1], 10)
+            print(a1, a2, a3)
+            d = .5*((a1-a3)/(a1-(2*a2)+a3))
+            print(d)
+            freq[i] = a2 - (d/4)*(a1-a3)
+    return freq
+# print(len(short[:, 1]))
+# parabolic_ip(abs(short[:, 1]))
+
+
+# for i in range(len(short[0])):
+#     parabolic_ip(abs(short[:, 1]))
+#
 
 print("Window size in ms: ", (2048/sr)*1000)
 # f, t, Zxx = signal.stf

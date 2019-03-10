@@ -2,9 +2,6 @@ from math import floor, log2
 import numpy as np
 
 
-
-
-
 def midi_to_pitch(note, tuning=440):
     """Takes a midi number and returns the relative frequency. Has a tuning parameter with defaults to 440"""
     return (2 ** ((note - 69) / 12)) * tuning
