@@ -7,8 +7,8 @@ from math import log
 
 
 # sr, song = scipy.io.wavfile.read('../Songs/river_flows_in_you_mono.wav')
-sr, song = scipy.io.wavfile.read('../Songs/fur_elise.wav')
-# sr, song = scipy.io.wavfile.read('../Songs/Deadmau5 - Strobe (Evan Duffy Piano Cover).wav')
+# sr, song = scipy.io.wavfile.read('../Songs/fur_elise.wav')
+sr, song = scipy.io.wavfile.read('../Songs/Deadmau5 - Strobe (Evan Duffy Piano Cover).wav')
 song = song[:5*sr]
 plt.plot(song)
 plt.show()
@@ -71,22 +71,31 @@ for i in range(0, len(song)-win_len, 128):
     # TODO: Threshold here is currently just average, find a better solution
     windowed = song[i:i+win_len]*w
     this = np.fft.fft(windowed, n=8192)
-    totes = np.sum(windowed)
+    totes += np.sum(windowed)
     # print(i//128)
     this = np.abs(this[:len(this)//2])
+
     # this = 2*(this/totes)
-    this[this < (np.average(this)*100)] = 0
+    # this[this < (np.average(this)*50)] = 0   This worked decently for the piano pieces
     short[:, (i//128)-1] = this
+
+#normalised ??
+short = 2*(short/totes)
 # This is the peak picking for
 print(short.shape)
+
 # for j in range(len(short[0])):
-#     threshold = 2*(abs(short[:, j])/totes)
-#     print(threshold, "this")
-#     break
+#     peaks, _ = scipy.signal.find_peaks(short[:, j])
+#     if len(peaks) > 0:
+#         print(len(peaks), "Preaks")
+#     for x in range(0, len(short[0])):
+#         if x not in peaks:
+#             short[:, x] = 0
 
-short = log_compression(short)
+exit()
+# short = log_compression(short)
 # l = np.array(l)
-
+print("SAMPLE RATE: ", sr)
 # Parabolic interpolation
 
 
@@ -110,7 +119,7 @@ def parabolic_ip(freq):
 #     parabolic_ip(abs(short[:, 1]))
 #
 
-print("Window size in ms: ", (2048/sr)*1000)
+print("Window size in ms: ", (win_len/sr)*1000)
 # f, t, Zxx = signal.stf
 print(len(Zxx[0]), "Length of STFT")
 
