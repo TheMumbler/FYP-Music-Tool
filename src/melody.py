@@ -68,17 +68,21 @@ totes = 0
 
 for i in range(0, len(song)-win_len, 128):
     # TODO: Fix the normalisation peak picking
+    # TODO: Threshold here is currently just average, find a better solution
     windowed = song[i:i+win_len]*w
     this = np.fft.fft(windowed, n=8192)
     totes = np.sum(windowed)
-    print(i//128)
+    # print(i//128)
     this = np.abs(this[:len(this)//2])
-    this = 2*(this/totes)
+    # this = 2*(this/totes)
+    this[this < (np.average(this)*100)] = 0
     short[:, (i//128)-1] = this
 # This is the peak picking for
 print(short.shape)
 # for j in range(len(short[0])):
-#     short[:, j] = 2*(short[:, j]/totes)
+#     threshold = 2*(abs(short[:, j])/totes)
+#     print(threshold, "this")
+#     break
 
 short = log_compression(short)
 # l = np.array(l)
