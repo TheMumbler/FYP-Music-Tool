@@ -7,8 +7,8 @@ from math import log
 
 
 # sr, song = scipy.io.wavfile.read('../Songs/river_flows_in_you_mono.wav')
-# sr, song = scipy.io.wavfile.read('../Songs/fur_elise.wav')
-sr, song = scipy.io.wavfile.read('../Songs/Deadmau5 - Strobe (Evan Duffy Piano Cover).wav')
+sr, song = scipy.io.wavfile.read('../Songs/fur_elise.wav')
+# sr, song = scipy.io.wavfile.read('../Songs/Deadmau5 - Strobe (Evan Duffy Piano Cover).wav')
 song = song[:5*sr]
 plt.plot(song)
 plt.show()
@@ -76,11 +76,11 @@ for i in range(0, len(song)-win_len, 128):
     this = np.abs(this[:len(this)//2])
 
     # this = 2*(this/totes)
-    # this[this < (np.average(this)*50)] = 0   This worked decently for the piano pieces
+    this[this < (np.average(this)*100)] = 0 #   This worked decently for the piano pieces
     short[:, (i//128)-1] = this
 
 #normalised ??
-short = 2*(short/totes)
+# short = 2*(short/totes)
 # This is the peak picking for
 print(short.shape)
 
@@ -92,7 +92,7 @@ print(short.shape)
 #         if x not in peaks:
 #             short[:, x] = 0
 
-exit()
+
 # short = log_compression(short)
 # l = np.array(l)
 print("SAMPLE RATE: ", sr)
