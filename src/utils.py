@@ -61,3 +61,53 @@ def refined_log_freq_spec(spect):
         new_full[freq_to_bucket(index)-1] = new_full[freq_to_bucket(index)-1] + spect[index]
         # print(freq_to_bucket(index))
     return new_full
+
+
+def harmonic_summ(arr):
+    # TODO: This is not changing the output at all
+    arr= abs(arr)
+    # arr = arr[::-1]
+    for i in range(1, len(arr)+1):
+        if (i+1)*2 < len(arr):
+            arr[i-1] += arr[(i+1)*2]
+            if (i+1)*3 < len(arr):
+                arr[i-1] += arr[(i+1)*3]
+                if (i+1)*4 < len(arr):
+                    arr[i-1] += arr[(i+1)*4]
+                    if (i+1)*5 < len(arr):
+                        arr[i-1] += arr[(i+1)*5]
+    arr = arr[::-1]
+    return arr
+
+
+
+def my_stft(song):
+    # TODO: Tidy this up
+    win_len = 2048
+    w = scipy.signal.get_window("hann", win_len)
+    hop_size = 128
+    short = np.zeros(shape=(4096, (len(song) - win_len) // 128))
+    totes = np.ones(shape=w.shape)
+
+    for i in range(0, len(song) - win_len, 128):
+        # TODO: Fix the normalisation peak picking
+        # TODO: Threshold here is currently just average, find a better solution
+        windowed = song[i:i + win_len] * w
+        this = np.fft.fft(windowed, n=8192)
+        # totes += np.sum(windowed)
+        # plt.plot(test)
+        # plt.show()
+        # print(i//128)
+        this = np.abs(this[:len(this) // 2])
+        med = np.max(this) / 2
+        # print("med", med)
+        # plt.plot([med]*len(this))
+        # plt.plot(this)
+        # plt.show()
+
+        # this = 2*(this/totes)
+        # this[this < (np.average(this)*50)] = 0   This worked decently for the piano pieces
+        this[this < med] = 0
+        short[:, (i // 128) - 1] = this
+    return song
+

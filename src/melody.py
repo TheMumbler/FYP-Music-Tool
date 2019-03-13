@@ -7,9 +7,9 @@ from math import log
 
 
 # sr, song = scipy.io.wavfile.read('../Songs/river_flows_in_you_mono.wav')
-# sr, song = scipy.io.wavfile.read('../Songs/fur_elise.wav')
-sr, song = scipy.io.wavfile.read('../Songs/Deadmau5 - Strobe (Evan Duffy Piano Cover).wav')
-song = song[:5*sr]
+sr, song = scipy.io.wavfile.read('../Songs/fur_elise.wav')
+# sr, song = scipy.io.wavfile.read('../Songs/Deadmau5 - Strobe (Evan Duffy Piano Cover).wav')
+song = song[1*sr:5*sr]
 plt.plot(song)
 plt.show()
 
@@ -65,22 +65,30 @@ w = scipy.signal.get_window("hann", win_len)
 hop_size = 128
 short = np.zeros(shape=(4096, (len(song)-win_len)//128))
 totes = 0
+thresh = np.zeros(shape=(8192,))
 
 for i in range(0, len(song)-win_len, 128):
     # TODO: Fix the normalisation peak picking
     # TODO: Threshold here is currently just average, find a better solution
     windowed = song[i:i+win_len]*w
     this = np.fft.fft(windowed, n=8192)
-    totes += np.sum(windowed)
-    # print(i//128)
+    # for k in range(win_len):
+    #     totes += np.sum(song[i+k : i+k+win_len])
+    # totes += np.sum(windowed)
+    # print(totes, " : Totes")
+    # test = 2 * (abs(this)/totes)
+    # print(this.shape)
+    # this = harmonic_summ(this)
     this = np.abs(this[:len(this)//2])
 
+    # print(i//128)
     # this = 2*(this/totes)
     # this[this < (np.average(this)*50)] = 0   This worked decently for the piano pieces
     short[:, (i//128)-1] = this
+print(np.argmax(short))
 
 #normalised ??
-short = 2*(short/totes)
+# short = 2*(short/totes)
 # This is the peak picking for
 print(short.shape)
 
@@ -92,7 +100,7 @@ print(short.shape)
 #         if x not in peaks:
 #             short[:, x] = 0
 
-exit()
+
 # short = log_compression(short)
 # l = np.array(l)
 print("SAMPLE RATE: ", sr)
