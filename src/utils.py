@@ -1,5 +1,15 @@
 from math import floor, log2
 import numpy as np
+import matplotlib.pyplot as plt
+from scipy import signal
+
+
+def time_coef(frame, hop_size, sr):
+    return (frame*hop_size)/sr
+
+
+def freq_coef(ind, sr, win_len):
+    return (ind * sr)/win_len
 
 
 def mag_to_db(mag):
@@ -56,6 +66,15 @@ def freq_to_bucket(freq, cents=100):
     return floor((1200/cents)*log2(freq/440)+69.5)
 
 
+def display(spec, text="STFT"):
+    plt.pcolormesh(np.abs(spec))
+    plt.colorbar()
+    plt.title(text)
+    plt.ylabel('Frequency ')
+    plt.xlabel('Time ')
+    plt.show()
+
+
 def refined_log_freq_spec(spect):
     # TODO: This function breaks if freq_to_buckets cents is set to anything small as it tries to get negative index
     song_length = len(spect[0])
@@ -79,40 +98,27 @@ def harmonic_summ(arr):
     # TODO: This is not changing the output at all
     # TODO: IMPORTANT
     for i in range(len(arr)-28):
-        if arr[i] > 1000000:
-            arr[i] += arr[i+12] + arr[i+19] + arr[i+24] + arr[i+28]
+        arr[i] += arr[i+12] + arr[i+19] + arr[i+24] + arr[i+28]
     return arr
 
 
 def my_stft(song):
     # TODO: Tidy this up
     win_len = 2048
-    w = scipy.signal.get_window("hann", win_len)
+    w = signal.get_window("hann", win_len)
     hop_size = 128
-    short = np.zeros(shape=(4096, (len(song) - win_len) // 128))
+    short = np.zeros(shape=(4096, (len(song) - win_len) // 128), dtype=complex)
     totes = np.ones(shape=w.shape)
 
-    for i in range(0, len(song) - win_len, 128):
+    for i in range(0, len(song) - win_len, hop_size):
         # TODO: Fix the normalisation peak picking
         # TODO: Threshold here is currently just average, find a better solution
+        # Phase is not being added to the stft
         windowed = song[i:i + win_len] * w
         this = np.fft.fft(windowed, n=8192)
-        # totes += np.sum(windowed)
-        # plt.plot(test)
-        # plt.show()
-        # print(i//128)
-        this = np.abs(this[:len(this) // 2])
-        med = np.max(this) / 2
-        # print("med", med)
-        # plt.plot([med]*len(this))
-        # plt.plot(this)
-        # plt.show()
-
-        # this = 2*(this/totes)
-        # this[this < (np.average(this)*50)] = 0   This worked decently for the piano pieces
-        this[this < med] = 0
-        short[:, (i // 128) - 1] = this
-    return song
+        this = this[:len(this) // 2]
+        short[:, (i // hop_size) - 1] = this
+    return short
 
 
 def voicing(t, threshold=1):

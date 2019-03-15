@@ -35,6 +35,7 @@ for i in range(0, len(song)-win_len, hop_size):
     windowed = song[i:i+win_len]*w
     this = np.fft.fft(windowed, n=8192)
     this = np.abs(this[:len(this)//2])
+
     # print(i//128)
     # this = 2*(this/totes)
     # this[this < (np.average(this)*50)] = 0 #   This worked decently for the piano pieces
@@ -49,7 +50,7 @@ print(short.shape)
 
 
 
-short = log_compression(short)
+# short = log_compression(short)
 # l = np.array(l)
 print("SAMPLE RATE: ", sr)
 # Parabolic interpolation
