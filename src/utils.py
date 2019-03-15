@@ -2,6 +2,12 @@ from math import floor, log2
 import numpy as np
 
 
+def mag_to_db(mag):
+    # for i in range(len(mag)):
+    #     mag[i] = 20 * np.log10(mag[i])
+    return 20 * np.log10(mag)
+
+
 def midi_to_pitch(note, tuning=440):
     """Takes a midi number and returns the relative frequency. Has a tuning parameter with defaults to 440"""
     return (2 ** ((note - 69) / 12)) * tuning
@@ -63,22 +69,19 @@ def refined_log_freq_spec(spect):
     return new_full
 
 
+def magphase(spect):
+    mag = np.abs(spect)
+    phase = np.exp(1.j * np.angle(spect))
+    return mag, phase
+
+
 def harmonic_summ(arr):
     # TODO: This is not changing the output at all
-    arr= abs(arr)
-    # arr = arr[::-1]
-    for i in range(1, len(arr)+1):
-        if (i+1)*2 < len(arr):
-            arr[i-1] += arr[(i+1)*2]
-            if (i+1)*3 < len(arr):
-                arr[i-1] += arr[(i+1)*3]
-                if (i+1)*4 < len(arr):
-                    arr[i-1] += arr[(i+1)*4]
-                    if (i+1)*5 < len(arr):
-                        arr[i-1] += arr[(i+1)*5]
-    arr = arr[::-1]
+    # TODO: IMPORTANT
+    for i in range(len(arr)-28):
+        if arr[i] > 1000000:
+            arr[i] += arr[i+12] + arr[i+19] + arr[i+24] + arr[i+28]
     return arr
-
 
 
 def my_stft(song):
@@ -111,3 +114,10 @@ def my_stft(song):
         short[:, (i // 128) - 1] = this
     return song
 
+
+def voicing(t, threshold=1):
+    """Takes a column of stft and a volume threshold and will return any notes that are present"""
+    if np.max(t) > 1000000:
+        return np.argmax(t)
+    else:
+        return -1
