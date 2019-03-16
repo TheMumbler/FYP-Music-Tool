@@ -107,9 +107,8 @@ def my_stft(song):
     win_len = 2048
     w = signal.get_window("hann", win_len)
     hop_size = 128
-    short = np.zeros(shape=(4096, (len(song) - win_len) // 128), dtype=complex)
+    short = np.zeros(shape=(4096, (len(song) - win_len) // hop_size), dtype=complex)
     totes = np.ones(shape=w.shape)
-
     for i in range(0, len(song) - win_len, hop_size):
         # TODO: Fix the normalisation peak picking
         # TODO: Threshold here is currently just average, find a better solution
@@ -127,3 +126,9 @@ def voicing(t, threshold=1):
         return np.argmax(t)
     else:
         return -1
+
+
+def bin_offset(k, kval, kval2, N =8192, sr=44100, H=128):
+    first = N/H
+    second = np.angle(kval - kval2 - ((k*H)/N))/(np.pi*2)
+    return k + (first*second)*(sr/N)

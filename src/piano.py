@@ -14,7 +14,8 @@ Convert final product into midi file
 import scipy.io.wavfile
 from utils import *
 
-sr, song = scipy.io.wavfile.read('../Songs/fur_elise.wav')
+# sr, song = scipy.io.wavfile.read('../Songs/fur_elise.wav')
+sr, song = scipy.io.wavfile.read('../Songs/sin.wav')
 
 # We will just take the 1st 5 secs
 song = song[:sr*5]
@@ -36,10 +37,17 @@ spec = my_stft(song)
 # log3 = log_compression(spec, 100)
 # display(log3, "100")
 
+
+
+
 # magdb[magdb < 400] = 0
-magdb = mag_to_db(spec)
+m, p = magphase(spec)
+
+display(abs(spec))
+magdb = mag_to_db(m)
+# magdb = m
+peaks, _ = signal.find_peaks(np.abs(magdb[:, 200]), height=50)
 # magdb = refined_log_freq_spec(magdb)
 # magdb = harmonic_summ(magdb)
 display(magdb, "magdb")
-
 

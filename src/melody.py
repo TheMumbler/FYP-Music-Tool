@@ -7,9 +7,10 @@ from math import log
 
 
 # sr, song = scipy.io.wavfile.read('../Songs/river_flows_in_you_mono.wav')
-sr, song = scipy.io.wavfile.read('../Songs/fur_elise.wav')
+# sr, song = scipy.io.wavfile.read('../Songs/fur_elise.wav')
 # sr, song = scipy.io.wavfile.read('../Songs/Deadmau5 - Strobe (Evan Duffy Piano Cover).wav')
 # sr, song = scipy.io.wavfile.read('../Songs/into.wav')
+sr, song = scipy.io.wavfile.read('../Songs/sin.wav')
 songmax = np.max(song)
 song = song[:5*sr]
 # plt.plot(song)
@@ -46,7 +47,6 @@ print(np.argmax(short))
 # short = 2*(short/totes)
 # This is the peak picking for
 print(short.shape)
-
 
 
 
@@ -114,13 +114,13 @@ plt.show()
 Zxx = refined_log_freq_spec(Zxx)
 # for line in new_ref.T:
 #     print(voicing(line))
-# plt.pcolormesh(np.abs(short))
-# plt.colorbar()
-# plt.title('MY BOY')
-# plt.ylabel('Frequency [Hz]')
-# plt.xlabel('Time [sec]')
-# plt.show()
-#
+plt.pcolormesh(np.abs(short))
+plt.colorbar()
+plt.title('MY BOY')
+plt.ylabel('Frequency [Hz]')
+plt.xlabel('Time [sec]')
+plt.show()
+
 #
 plt.pcolormesh(np.abs(Zxx))
 plt.colorbar()
