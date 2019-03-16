@@ -8,7 +8,7 @@ def time_coef(frame, hop_size, sr):
     return (frame*hop_size)/sr
 
 
-def freq_coef(ind, sr, win_len):
+def freq_coef(ind, sr=44100, win_len=8192):
     return (ind * sr)/win_len
 
 
@@ -77,6 +77,7 @@ def display(spec, text="STFT"):
 
 def refined_log_freq_spec(spect):
     # TODO: This function breaks if freq_to_buckets cents is set to anything small as it tries to get negative index
+    # TODO: Added freq_coef in here
     song_length = len(spect[0])
     freq_range = len(spect)
     # print(spect.shape)
