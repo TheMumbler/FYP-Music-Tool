@@ -16,7 +16,8 @@ from utils import *
 from math import log10
 import numpy as np
 
-sr, song = scipy.io.wavfile.read('../Songs/fur_elise.wav')
+# sr, song = scipy.io.wavfile.read('../Songs/fur_elise.wav')
+sr, song = scipy.io.wavfile.read('../Songs/river_flows_in_you_mono.wav')
 # sr, song = scipy.io.wavfile.read('../Songs/Deadmau5 - Strobe (Evan Duffy Piano Cover).wav')
 # sr, song = scipy.io.wavfile.read('../Songs/sin.wav')
 
@@ -48,10 +49,10 @@ for i in range(len(spec.T)):
 display(spec)
 
 
-# for i in range(len(spec.T)):
-#     spec[:, i] = harmsumm(spec[:, i], peaks[i])
-#
-# display(spec)
+for i in range(len(spec.T)):
+    spec[:, i] = harmsumm(spec[:, i], peaks[i])
+
+display(spec)
 
 
 
