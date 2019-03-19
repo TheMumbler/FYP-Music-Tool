@@ -79,12 +79,13 @@ def display(spec, text="STFT"):
 def refined_log_freq_spec(spect, bins=128):
     # TODO: This function breaks if freq_to_buckets cents is set to anything small as it tries to get negative index
     song_length = len(spect[0])
-    new_full = np.zeros(shape=(bins, song_length))
+    new_full = np.zeros(shape=(bins, song_length), dtype='complex')
     for index in range(1, len(spect)):
+        print(index)
         if freq_to_bucket(index) >= 128:
             break
         # TODO: When peak picking has been fixed look into this
-        new_full[freq_to_bucket(index)] = new_full[freq_to_bucket(index)] + spect[index]
+        new_full[freq_to_bucket(index)] += spect[index]
         # print(freq_to_bucket(index))
     return new_full
 
@@ -143,3 +144,17 @@ def bin_offset(k, kval, kval2, N =8192, sr=44100, H=128):
     first = N/H
     second = np.angle(kval - kval2 - ((k*H)/N))/(np.pi*2)
     return k + (first*second)*(sr/N)
+
+
+def phase_correct(spec, N=8192, H=128):
+    first = N / (np.pi*H)
+    for i in range(1, len(spec[0])-1):
+        curr = spec[:, i]
+        prev = spec[:, i-1].imag
+        icurr = curr.imag
+        principal = np.angle(icurr - prev - ((np.pi*H)/N)*curr)
+        spec[:, i] += (first * principal) -1
+        print("curr", curr)
+        print(curr + (first * principal), "\n")
+    return spec
+
