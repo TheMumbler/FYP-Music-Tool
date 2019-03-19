@@ -94,10 +94,10 @@ def select_peaks(frame):
     """Takes a frame of stft and only keeps the peaks"""
     normal = np.abs(frame)
     peaks, _ = signal.find_peaks(normal)
-    mask = np.zeros_like(frame)
+    mask = np.zeros_like(frame, dtype='complex')
     for peak in peaks:
-        mask[peak] = 10
-    return frame * mask
+        mask[peak] = 1
+    return peaks, frame * mask
 
 
 def magphase(spect):
@@ -146,6 +146,10 @@ def bin_offset(k, kval, kval2, N =8192, sr=44100, H=128):
     return k + (first*second)*(sr/N)
 
 
+def refined_phase(spec):
+    pass
+
+
 def phase_correct(spec, N=8192, H=128):
     first = N / (np.pi*H)
     for i in range(1, len(spec[0])-1):
@@ -153,8 +157,14 @@ def phase_correct(spec, N=8192, H=128):
         prev = spec[:, i-1].imag
         icurr = curr.imag
         principal = np.angle(icurr - prev - ((np.pi*H)/N)*curr)
-        spec[:, i] += (first * principal) -1
+        spec[:, i] += (first * principal)
         print("curr", curr)
         print(curr + (first * principal), "\n")
     return spec
 
+
+def harmsumm(frame, peaks):
+    for peak in peaks:
+        if peak < 100:
+            frame[peak] += frame[peak + 12] + frame[peak + 19] + frame[peak + 24] + frame[peak + 28]
+    return frame

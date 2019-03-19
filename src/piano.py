@@ -17,6 +17,7 @@ from math import log10
 import numpy as np
 
 sr, song = scipy.io.wavfile.read('../Songs/fur_elise.wav')
+# sr, song = scipy.io.wavfile.read('../Songs/Deadmau5 - Strobe (Evan Duffy Piano Cover).wav')
 # sr, song = scipy.io.wavfile.read('../Songs/sin.wav')
 
 # We will just take the 1st 5 secs
@@ -26,9 +27,39 @@ song = song[:sr*5]
 
 spec = my_stft(song)
 display(spec)
-clean = spec.copy()
+peaks = []
+for i in range(len(spec.T)):
+    peak, spec[:, i] = select_peaks(spec[:, i])
+    peaks.append(peak)
 
-clean = phase_correct(spec)
-display(clean)
 
+display(spec)
+
+spec = refined_log_freq_spec(spec)
+
+display(spec)
+
+
+for i in range(len(spec.T)):
+    tes = spec[:, i]
+    tes = np.where(20*np.log10(np.max(tes)/tes) < 80, tes, 0)
+    spec[:, i] = tes
+
+display(spec)
+
+
+# for i in range(len(spec.T)):
+#     spec[:, i] = harmsumm(spec[:, i], peaks[i])
+#
+# display(spec)
+
+
+
+
+# x = mag_to_db(abs(spec))
+# for i in range(len(x[0])):
+#     tes = x[:, i]
+#     tes[tes != np.max(tes)] = 0
+#     x[:, i] = tes
+# display(x)
 
