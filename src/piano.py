@@ -14,8 +14,8 @@ Convert final product into midi file
 import scipy.io.wavfile
 from utils import *
 
-# sr, song = scipy.io.wavfile.read('../Songs/fur_elise.wav')
-sr, song = scipy.io.wavfile.read('../Songs/sin.wav')
+sr, song = scipy.io.wavfile.read('../Songs/fur_elise.wav')
+# sr, song = scipy.io.wavfile.read('../Songs/sin.wav')
 
 # We will just take the 1st 5 secs
 song = song[:sr*5]
@@ -23,7 +23,10 @@ song = song[:sr*5]
 # Peform STFT
 
 spec = my_stft(song)
+for i in range(len(spec[0])):
+    spec[:, i] = select_peaks(spec[:, i])
 
+spec = refined_log_freq_spec(spec)
 # display(spec, "pre-compression")
 
 # Log the magnitude to increase importance of lower notes
@@ -46,7 +49,9 @@ m, p = magphase(spec)
 display(abs(spec))
 magdb = mag_to_db(m)
 # magdb = m
-peaks, _ = signal.find_peaks(np.abs(magdb[:, 200]), height=50)
+
+
+
 # magdb = refined_log_freq_spec(magdb)
 # magdb = harmonic_summ(magdb)
 display(magdb, "magdb")

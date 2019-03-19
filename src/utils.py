@@ -15,7 +15,7 @@ def freq_coef(ind, sr=44100, win_len=8192):
 def mag_to_db(mag):
     # for i in range(len(mag)):
     #     mag[i] = 20 * np.log10(mag[i])
-    return 20 * np.log10(mag)
+    return np.where(mag > 0, 20 * np.log10(mag), 0)
 
 
 def midi_to_pitch(note, tuning=440):
@@ -62,8 +62,9 @@ def log_freq_spec(spect):
     return new_full
 
 
-def freq_to_bucket(freq, cents=100):
-    return floor((1200/cents)*log2(freq/440)+69.5)
+def freq_to_bucket(freq, cents=100, ref=8.66):
+    freq = freq_coef(freq)
+    return floor((1200/cents)*log2(freq/ref)+1.5)
 
 
 def display(spec, text="STFT"):
@@ -75,18 +76,27 @@ def display(spec, text="STFT"):
     plt.show()
 
 
-def refined_log_freq_spec(spect):
+def refined_log_freq_spec(spect, bins=128):
     # TODO: This function breaks if freq_to_buckets cents is set to anything small as it tries to get negative index
-    # TODO: Added freq_coef in here
     song_length = len(spect[0])
-    freq_range = len(spect)
-    # print(spect.shape)
-    new_full = np.zeros(shape=(freq_to_bucket(freq_range-1), song_length))
-    # print(new_full.shape)
+    new_full = np.zeros(shape=(bins, song_length))
     for index in range(1, len(spect)):
-        new_full[freq_to_bucket(index)-1] = new_full[freq_to_bucket(index)-1] + spect[index]
+        if freq_to_bucket(index) >= 128:
+            break
+        # TODO: When peak picking has been fixed look into this
+        new_full[freq_to_bucket(index)] = new_full[freq_to_bucket(index)] + spect[index]
         # print(freq_to_bucket(index))
     return new_full
+
+
+def select_peaks(frame):
+    """Takes a frame of stft and only keeps the peaks"""
+    normal = np.abs(frame)
+    peaks, _ = signal.find_peaks(normal)
+    mask = np.zeros_like(frame)
+    for peak in peaks:
+        mask[peak] = 10
+    return frame * mask
 
 
 def magphase(spect):
