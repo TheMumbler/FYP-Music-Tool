@@ -14,21 +14,37 @@ def magphase(D, power=1):
     return mag, phase
 
 
+# def hpss(S):
+#     """Split the wave into harmonic and percussive"""
+#     if np.iscomplexobj(S):
+#         S, phase = magphase(S)
+#     else:
+#         phase = 1
+#
+#     power = 2
+#     harm = np.empty_like(S)
+#     harm[:] = median_filter(S, size=(1, 32))
+#     perc = np.empty_like(S)
+#     perc[:] = median_filter(S, size=(32, 1))
+#     # mask_harm = (harm ** power)/ (harm**power + perc**power)
+#     # mask_perc = (perc ** power)/ (perc**power + harm**power)
+#     return (S * harm) * phase, (S * perc) * phase
+
 def hpss(S):
     """Split the wave into harmonic and percussive"""
     if np.iscomplexobj(S):
         S, phase = magphase(S)
     else:
         phase = 1
-
-    power = 2
-    harm = np.empty_like(S)
+    harm = np.empty_like(s)
+    perc = np.empty_like(s)
+    eps = .1
     harm[:] = median_filter(S, size=(1, 32))
-    perc = np.empty_like(S)
     perc[:] = median_filter(S, size=(32, 1))
-    # mask_harm = (harm ** power)/ (harm**power + perc**power)
-    # mask_perc = (perc ** power)/ (perc**power + harm**power)
-    return (S * harm) * phase, (S * perc) * phase
+    mask_h = ((harm + eps)/2)/(harm + perc + eps)
+    mask_p = ((perc + eps)/2)/(harm + perc + eps)
+    return mask_h*S*phase, mask_p*S*phase
+
 
 # `M = X**power / (X**power + X_ref**power)`
 
@@ -60,8 +76,8 @@ plt.ylabel('Frequency [Hz]')
 plt.xlabel('Time [sec]')
 plt.show()
 
-_, h = scipy.signal.istft(h, fs=sr)
-_, p = scipy.signal.istft(p, fs=sr)
+_, h = scipy.signal.istft(h, fs=sr, nperseg=2048, nfft=8192)
+_, p = scipy.signal.istft(p, fs=sr, nperseg=2048, nfft=8192)
 print(h)
 h = np.asarray(h, dtype=np.int16)
 p = np.asarray(p, dtype=np.int16)
