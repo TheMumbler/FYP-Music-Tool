@@ -41,15 +41,15 @@ def hpss(S):
     eps = .1
     harm[:] = median_filter(S, size=(1, 32))
     perc[:] = median_filter(S, size=(32, 1))
-    mask_h = ((harm + eps)/2)/(harm + perc + eps)
-    mask_p = ((perc + eps)/2)/(harm + perc + eps)
+    mask_h = (((harm + eps)/2)*2)/((harm + perc + eps)*2)
+    mask_p = (((perc + eps)/2)*2)/((harm + perc + eps)*2)
     return mask_h*S*phase, mask_p*S*phase
 
 
 # `M = X**power / (X**power + X_ref**power)`
 
-sr, song = scipy.io.wavfile.read('../Songs/into.wav')
-song = song[:5*sr]
+sr, song = scipy.io.wavfile.read('../Songs/test.wav')
+# song = song[:5*sr]
 
 _, _, s = signal.stft(song, fs=sr, nperseg=2048, nfft=8192)
 
