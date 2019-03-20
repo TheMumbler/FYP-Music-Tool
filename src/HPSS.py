@@ -32,6 +32,7 @@ def magphase(D, power=1):
 
 def hpss(S):
     """Split the wave into harmonic and percussive"""
+    # TODO: Add option of binary masking instead of soft masking
     if np.iscomplexobj(S):
         S, phase = magphase(S)
     else:
