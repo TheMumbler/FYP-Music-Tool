@@ -1,19 +1,15 @@
-import librosa
+from scipy import signal
+import numpy as np
 # TODO: Find only necessary librosa packages to lower import time
 
 
 class Song(object):
     tracks = []
 
-    def __init__(self, filename, bpm=0):
+    def __init__(self, filename):
         self.name = filename
-        self.wave, self.sr = librosa.load(filename)
-        self.onset_env = librosa.onset.onset_detect(self.wave, sr=self.sr)
-        # self.spectro = scipy.stft(self.wave)
-        if bpm == 0:
-            self.bpm = librosa.beat.tempo(onset_envelope=self.onset_env, sr=self.sr)
-        else:
-            self.bpm = bpm
+        self.sr, self.wave = scipy.io.wavfile.read(filename)
+        self.spectro = self.short_time()
 
     # PREPROCESSING
 
@@ -22,9 +18,18 @@ class Song(object):
         return wave
 
     # TRANSFORM
-    def short_time(self):
+    def short_time(self, win_len=2048, w='hann', nfft=8192, hop_size=128):
         """Short time fourier transform"""
-        pass
+        # TODO: Tidy this up
+        song = self.wave
+        w = signal.get_window(w, win_len)
+        short = np.zeros(shape=(nfft/2, (len(song) - win_len) // hop_size), dtype=complex)
+        for i in range(0, len(song) - win_len, hop_size):
+            windowed = song[i:i + win_len] * w
+            this = np.fft.fft(windowed, n=8192)
+            this = this[:len(this) // 2]
+            short[:, (i // hop_size) - 1] = this
+        return short
 
     def constant_q(self):
         """Constant q transform"""
@@ -43,8 +48,8 @@ class Song(object):
     # VOICING (Determining where notes are present or not)
 
     def __repr__(self):
-        return "filename: {}\nbpm: {}".format(self.name, self.bpm)
+        return "filename: {}".format(self.name)
 
 
-x = Song('../Songs/river_flows_in_you.wav', bpm=10)
+x = Song('../Songs/river_flows_in_you.wav')
 print(x)
