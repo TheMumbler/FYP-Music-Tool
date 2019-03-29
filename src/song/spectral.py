@@ -1,6 +1,6 @@
 from scipy import signal
 import numpy as np
-from src.song.utils import freq_to_bucket
+from .utils import freq_to_bucket
 
 
 def my_stft(song, w="hann", win_len=2048, hop_size=128):

@@ -1,6 +1,6 @@
 import numpy as np
 from scipy.ndimage import median_filter
-from src.song.utils import magphase
+from .utils import magphase
 
 
 def hpss(spec):
