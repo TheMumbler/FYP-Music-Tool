@@ -44,8 +44,6 @@ def log_compression(spect, y=1):
 def bucket_size():
     # TODO: Maybe try remove this
     for i in np.arange(11.5, 108.5, 1):  # Maybe change 11.5 to zero?
-        # print(midi_to_pitch(i+.5))
-        # print(i+.5)
         yield int(i+.5), midi_to_pitch(i), midi_to_pitch(i+1)
 
 
