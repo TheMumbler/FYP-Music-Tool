@@ -1,17 +1,21 @@
-def hpss(wave):
+import numpy as np
+from scipy.ndimage import median_filter
+from src.song.utils import magphase
+
+
+def hpss(spec):
     """Split the wave into harmonic and percussive"""
-    return wave, wave
+    # TODO: Add option of binary masking instead of soft masking
+    if np.iscomplexobj(spec):
+        spec, phase = magphase(spec)
+    else:
+        phase = 1
+    harm = np.empty_like(s)
+    perc = np.empty_like(s)
+    eps = .1
+    harm[:] = median_filter(spec, size=(1, 32))
+    perc[:] = median_filter(spec, size=(32, 1))
+    mask_h = (((harm + eps)/2)*2)/((harm + perc + eps)*2)
+    mask_p = (((perc + eps)/2)*2)/((harm + perc + eps)*2)
+    return mask_h * spec * phase, mask_p * spec * phase
 
-
-def harmonic_summ(arr):
-    arr = abs(arr)
-    for i in range(1, len(arr)+1):
-        if (i+1)*2 < len(arr):
-            arr[i-1] += arr[(i+1)*2]
-            if (i+1)*3 < len(arr):
-                arr[i-1] += arr[(i+1)*3]
-                if (i+1)*4 < len(arr):
-                    arr[i-1] += arr[(i+1)*4]
-                    if (i+1)*5 < len(arr):
-                        arr[i-1] += arr[(i+1)*5]
-    return arr

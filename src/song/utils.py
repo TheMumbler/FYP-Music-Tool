@@ -29,8 +29,6 @@ def note_pitch_midi(tuning=440):
     note_names = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
     note_names = note_names * 10
     for midi_num, name in zip(range(12, len(note_names)), note_names):
-        # print(name + str((i//12)-1), midi_to_pitch(i))
-        # print(midi_num)
         note_info[name + str((midi_num // 12) - 1)] = [midi_to_pitch(midi_num, tuning), midi_num]
     return note_info
 
@@ -74,20 +72,6 @@ def display(spec, text="STFT"):
     plt.show()
 
 
-def refined_log_freq_spec(spect, bins=128):
-    # TODO: This function breaks if freq_to_buckets cents is set to anything small as it tries to get negative index
-    song_length = len(spect[0])
-    new_full = np.zeros(shape=(bins, song_length), dtype='complex')
-    for index in range(1, len(spect)):
-        print(index)
-        if freq_to_bucket(index) >= 128:
-            break
-        # TODO: When peak picking has been fixed look into this
-        new_full[freq_to_bucket(index)] += spect[index]
-        # print(freq_to_bucket(index))
-    return new_full
-
-
 def select_peaks(frame):
     """Takes a frame of stft and only keeps the peaks"""
     normal = np.abs(frame)
@@ -107,27 +91,10 @@ def magphase(spect):
 def harmonic_summ(arr):
     # TODO: This is not changing the output at all
     # TODO: IMPORTANT
+    # TODO: Change to an inplace list mod
     for i in range(len(arr)-28):
         arr[i] += arr[i+12] + arr[i+19] + arr[i+24] + arr[i+28]
     return arr
-
-
-def my_stft(song):
-    # TODO: Tidy this up
-    win_len = 2048
-    w = signal.get_window("hann", win_len)
-    hop_size = 128
-    short = np.zeros(shape=(4096, (len(song) - win_len) // hop_size), dtype=complex)
-    totes = np.ones(shape=w.shape)
-    for i in range(0, len(song) - win_len, hop_size):
-        # TODO: Fix the normalisation peak picking
-        # TODO: Threshold here is currently just average, find a better solution
-        # Phase is not being added to the stft
-        windowed = song[i:i + win_len] * w
-        this = np.fft.fft(windowed, n=8192)
-        this = this[:len(this) // 2]
-        short[:, (i // hop_size) - 1] = this
-    return short
 
 
 def voicing(t, threshold=1):
@@ -142,7 +109,6 @@ def bin_offset(k, kval, kval2, N =8192, sr=44100, H=128):
     first = N/H
     second = np.angle(kval - kval2 - ((k*H)/N))/(np.pi*2)
     return k + (first*second)*(sr/N)
-
 
 
 def phase_correct(spec, N=8192, H=128):
