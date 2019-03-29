@@ -144,9 +144,6 @@ def bin_offset(k, kval, kval2, N =8192, sr=44100, H=128):
     return k + (first*second)*(sr/N)
 
 
-def refined_phase(spec):
-    pass
-
 
 def phase_correct(spec, N=8192, H=128):
     first = N / (np.pi*H)
