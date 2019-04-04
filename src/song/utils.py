@@ -8,8 +8,8 @@ def time_coef(frame, hop_size, sr):
     return (frame*hop_size)/sr
 
 
-def freq_coef(ind, sr=44100, win_len=8192):
-    return (ind * sr)/win_len
+def freq_coef(ind, sr=44100, nfft=8192):
+    return ind * (sr/nfft)
 
 
 def mag_to_db(mag):
@@ -63,19 +63,11 @@ def freq_to_bucket(freq, cents=100, ref=8.66):
     return floor((1200/cents)*log2(freq/ref)+1.5)
 
 
-def display(spec, text="STFT"):
-    plt.pcolormesh(np.abs(spec))
-    plt.colorbar()
-    plt.title(text)
-    plt.ylabel('Frequency ')
-    plt.xlabel('Time ')
-    plt.show()
-
-
-def select_peaks(frame):
+def select_peaks(frame, threshold=np.median):
     """Takes a frame of stft and only keeps the peaks"""
     normal = np.abs(frame)
-    peaks, _ = signal.find_peaks(normal)
+    height = threshold(normal)
+    peaks, _ = signal.find_peaks(normal, height, width=1)
     mask = np.zeros_like(frame, dtype='complex')
     for peak in peaks:
         mask[peak] = 1
@@ -124,8 +116,19 @@ def phase_correct(spec, N=8192, H=128):
     return spec
 
 
-def harmsumm(frame, peaks):
-    for peak in peaks:
-        if peak < 100:
+def harmsumm(frame):
+    for peak in range(len(frame)):
+        try:
             frame[peak] += frame[peak + 12] + frame[peak + 19] + frame[peak + 24] + frame[peak + 28]
+        except:
+            pass
     return frame
+
+
+def frame_to_time(frame, hop_size=256, sr=44100):
+    return (frame*hop_size)/sr
+
+
+def time_to_beats(time, bpm):
+    beat = 60/bpm
+    return time/beat
