@@ -9,19 +9,22 @@ from scipy.ndimage import maximum_filter
 from scipy.ndimage import minimum_filter
 from song import midi_tools
 from librosa.beat import tempo
-from midiutil import MIDIFile
 
 print("done importing")
 
 
-sr, song = read.read('../Songs/fur_elise.wav')
+# sr, song = read.read('../Songs/fur_elise.wav')
+# sr, song = read.read('../Songs/deadmau5.wav')
+# sr, song = read.read('../Songs/ree.wav')
+sr, song = read.read('../Songs/crab.wav')
 print("reading file")
 # sr, song = read.read('../Songs/river_flows_in_you.wav')
 song = song/1.0
+song = song[sr*30:]
 print("finding bpm")
 bpm = tempo(song, sr=sr)[0]
 # freqs= librosa.fft_frequencies(sr=sr, n_fft=8192)
-# song = song[:sr*5]
+# song = song[:sr*45]
 # test = np.abs(librosa.stft(song, hop_length=256, win_length=2048, n_fft=8192)
 print("creating stft")
 _, _, x = signal.stft(song, nperseg=2048, nfft=8192, noverlap=1792)  # 1792/1920
@@ -58,7 +61,8 @@ for frame in range(len(x.T)):
     two = np.argmax(x[:, frame])
     x[two, frame] = 0
     three = np.argmax(x[:, frame])
-    x[[one, two, three], frame] = 10000000
+    x[[one, two], frame] = 10000000
+    # x[[one, two, three], frame] = 10000000
 
 x = abs(x)
 x[x < 10000000] = 0
@@ -73,46 +77,11 @@ spectral.display(x)
 
 # print(len(np.nonzero(x[66])[0]))
 # print((np.nonzero(x[66])[0]))
-for i in np.nonzero(x[66, :]):
-    print(str(i[0]) + " " + str(i[-1]))
+# for i in np.nonzero(x[66, :]):
+#     print(str(i[0]) + " " + str(i[-1]))
 
-notes = {}
+# notes = {}
 
+notes = midi_tools.get_notes(x)
 
-def get_length(arr):
-    return arr[0], arr[-1]
-
-
-for freq in range(len(x)):
-    line = np.nonzero(x[freq])[0]
-    for hit in midi_tools.split_notes(line):
-        if len(hit) > 1:
-            dur = get_length(hit)
-            if freq in notes:
-                notes[freq].append(dur)
-            else:
-                notes[freq] = [dur]
-
-
-# for frame, note in notes:
-
-
-track = 0
-channel = 0
-time = 0   # In beats
-tempo = bpm  # In BPM
-volume = 100  # 0-127, as per the MIDI standard
-MyMIDI = MIDIFile(1)
-MyMIDI.addTempo(track, time, tempo)
-
-for key, items in notes.items():
-    pitch = key
-    for item in items:
-        start = utils.time_to_beats(utils.frame_to_time(item[0], sr=sr), bpm)
-        end = utils.time_to_beats(utils.frame_to_time(item[1], sr=sr), bpm)
-        duration = end - start
-        MyMIDI.addNote(track, channel, pitch, start, duration, volume)
-
-print("track complete")
-with open("fur-elise.mid", "wb") as output_file:
-    MyMIDI.writeFile(output_file)
+midi_tools.output_midi("ree", notes, bpm, sr)

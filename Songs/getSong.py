@@ -5,7 +5,7 @@ import subprocess
 link = input()
 
 # yt = YouTube("https://www.youtube.com/watch?v=mTwoMGCtPT8")
-yt = YouTube("https://www.youtube.com/watch?v=_mVW8tgGY_w")
+yt = YouTube("https://www.youtube.com/watch?v=LDU_Txk06tM")
 
 # yt = YouTube("https://www.youtube.com/watch?v=LSwXh1Y5thY")
 

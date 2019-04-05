@@ -10,8 +10,8 @@ def hpss(spec):
         spec, phase = magphase(spec)
     else:
         phase = 1
-    harm = np.empty_like(s)
-    perc = np.empty_like(s)
+    harm = np.empty_like(spec)
+    perc = np.empty_like(spec)
     eps = .1
     harm[:] = median_filter(spec, size=(1, 32))
     perc[:] = median_filter(spec, size=(32, 1))
