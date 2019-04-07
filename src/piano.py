@@ -18,7 +18,7 @@ import numpy as np
 
 # sr, song = scipy.io.wavfile.read('../Songs/fur_elise.wav')
 sr, song = scipy.io.wavfile.read('../Songs/river_flows_in_you_mono.wav')
-# sr, song = scipy.io.wavfile.read('../Songs/Deadmau5 - Strobe (Evan Duffy Piano Cover).wav')
+# sr, song = scipy.io.wavfile.read('../Songs/deadmau5.wav')
 # sr, song = scipy.io.wavfile.read('../Songs/sin.wav')
 
 # We will just take the 1st 5 secs

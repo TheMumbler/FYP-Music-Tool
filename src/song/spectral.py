@@ -22,7 +22,6 @@ def refined_log_freq_spec(spect, bins=128):
     song_length = len(spect[0])
     new_full = np.zeros(shape=(bins, song_length), dtype='complex')
     for index in range(1, len(spect)):
-        print(index)
         if freq_to_bucket(index) >= 128:
             break
         new_full[freq_to_bucket(index)] += spect[index]
@@ -34,16 +33,15 @@ def log_spec(spect, bins=128):
     song_length = len(spect[0])
     H = 256
     N = 8192
-    new_full = np.zeros(shape=(bins, song_length), dtype='complex')
+    new_full = np.zeros(shape=(bins, song_length))
     for frame in range(1, len(spect.T)):
         peaks, _ = signal.find_peaks(spect[:, frame])
-        phases = (np.angle(get_phase(peaks, spect[:, frame]) - get_phase(peaks, spect[:, frame-1])-((peaks*H)/N)))/(np.pi*2)
-        phases *= N/H
-        for old, new in zip(peaks, phases):
-            print(old, new)
-            if old+new < 0 or freq_to_bucket(old+new) >= 128:
+        # phases = (np.angle(get_phase(peaks, spect[:, frame]) - get_phase(peaks, spect[:, frame-1])-((peaks*H)/N)))/(np.pi*2)
+        # phases *= N/H
+        for peak in peaks:
+            if freq_to_bucket(peak) >= 128:
                 break
-            new_full[freq_to_bucket(old+new), frame] += spect[old, frame]
+            new_full[freq_to_bucket(peak), frame] += spect[peak, frame]
     return new_full
 
 
@@ -51,7 +49,7 @@ def get_phase(points, frame):
     return frame[points] - frame[points].real
 
 
-def salience(spec):
+def salience(spec, logged=True):
     """
     Take log spec
     pick peaks
@@ -59,12 +57,13 @@ def salience(spec):
     sum harms
     remove all lower value peaks
     """
-    l_peaks = []
     for frame in range(len(spec.T)):
-        peaks, spec[:, frame] = select_peaks(spec.T[frame], lambda x: np.max(x)/80)
-        l_peaks.append(peaks)
-        # harmonic_summation(spec[:, frame], peaks, [1, .5, .33, .25])
-    return peaks, spec
+        peaks, spec[:, frame] = select_peaks(spec.T[frame])
+        test = spec[:, frame]
+        test[test > 0] = 1
+        spec[:, frame] = test
+        harmonic_summation(spec[:, frame], peaks, [2, 1, .5, .25], logged=logged)
+    return spec
 
 
 def temp_function(spec):
@@ -77,13 +76,29 @@ def temp_function(spec):
     return spec
 
 
-def harmonic_summation(frame, peaks, weights):
+def harmonic_summation(frame, peaks, weights, logged=True):
     for peak in peaks:
-        harms = np.array(([peak+1]*4))
-        harms *= np.array([2, 3, 4, 5])
+        harms = np.array(([peak]*4))
+        if logged:
+            harms += np.array([12, 19, 24, 28])
+            fbins = 128
+        else:
+            harms = (harms+1) * np.array([2, 3, 4, 5])
+            fbins = 4096
         for harm, weight in zip(harms, weights):
-            if harm < 4094:
-                frame[peak] += frame[harm-1]*weight
+            if harm < fbins:
+                frame[peak] += frame[harm]*weight
+
+
+def chromagram(logspec):
+    # TODO: Allow this to take the last 8 notes it is missing at the top
+    chroma = np.empty(shape=(12, len(logspec[0])))
+    for i in range(0, len(logspec), 12):
+        try:
+            chroma += logspec[i:i+12]
+        except:
+            pass
+    return chroma
 
 
 def display(spec, text="STFT"):

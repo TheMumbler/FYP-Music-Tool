@@ -8,7 +8,7 @@ from math import log
 
 # sr, song = scipy.io.wavfile.read('../Songs/river_flows_in_you_mono.wav')
 # sr, song = scipy.io.wavfile.read('../Songs/fur_elise.wav')
-# sr, song = scipy.io.wavfile.read('../Songs/Deadmau5 - Strobe (Evan Duffy Piano Cover).wav')
+# sr, song = scipy.io.wavfile.read('../Songs/deadmau5.wav')
 # sr, song = scipy.io.wavfile.read('../Songs/into.wav')
 sr, song = scipy.io.wavfile.read('../Songs/sin.wav')
 songmax = np.max(song)

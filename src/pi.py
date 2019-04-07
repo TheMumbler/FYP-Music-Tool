@@ -16,11 +16,11 @@ print("done importing")
 # sr, song = read.read('../Songs/fur_elise.wav')
 # sr, song = read.read('../Songs/deadmau5.wav')
 # sr, song = read.read('../Songs/ree.wav')
-sr, song = read.read('../Songs/crab.wav')
+sr, song = read.read('../Songs/fur_elise.wav')
 print("reading file")
 # sr, song = read.read('../Songs/river_flows_in_you.wav')
 song = song/1.0
-song = song[sr*30:]
+# song = song[:sr*5]
 print("finding bpm")
 bpm = tempo(song, sr=sr)[0]
 # freqs= librosa.fft_frequencies(sr=sr, n_fft=8192)
@@ -84,4 +84,4 @@ spectral.display(x)
 
 notes = midi_tools.get_notes(x)
 
-midi_tools.output_midi("ree", notes, bpm, sr)
+midi_tools.output_midi("f elise", notes, bpm, sr)

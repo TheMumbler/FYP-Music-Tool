@@ -1,6 +1,8 @@
 from song import beat
 from song import read
 import matplotlib.pyplot as plt
+import numpy as np
+from song import spectral
 from time import sleep
 
 # from librosa.feature import rms
@@ -11,17 +13,15 @@ sr, song = read.read('../Songs/fur_elise.wav')
 # x = beat.half_w_rect(song[:sr * 3])
 song = song[:sr*5]
 y = beat.spec_novelty(song)
-z = beat.e_novelty(song[:sr*3])
-# plt.plot(x)
-plt.plot(abs(y[:-50]))
+
+# ave = beat.moving_average(abs(y[:-41]), 10)
+# y = y[:-50]
+y = abs(y)
+
+plt.plot(y)
+
 plt.show()
 
-plt.plot(abs(z[:-50]))
-plt.show()
-
-plt.plot(song)
-# sleep(1)
-# plt.plot(song[:-50*512])
-# plt.show()
-
+spectral.display(x)
+# print(beat.get_onsets(song))
 # plt.plot(t)
