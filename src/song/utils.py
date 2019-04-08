@@ -58,7 +58,7 @@ def log_freq_spec(spect):
     return new_full
 
 
-def freq_to_bucket(freq, cents=100, ref=8.66):
+def freq_to_bucket(freq, cents=100, ref=8.66, nfft=8192):
     freq = freq_coef(freq)
     return floor((1200/cents)*log2(freq/ref)+1.5)
 

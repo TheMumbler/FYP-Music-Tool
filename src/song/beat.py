@@ -24,12 +24,8 @@ def e_novelty(song, window="hann", win_len=2048, hop_size=512):
         # print(np.sum(currf))
         nextf = w * song[frame+hop_size:frame+win_len+hop_size]
         e = (np.mean(nextf)) - (np.mean(currf))
-        # e = half_w_rect(e)
-        # e = np.sum(e)
         energy[frame//hop_size] = e
     energy = half_w_rect(energy)
-    # print(energy.shape)
-    # print(energy)
     return energy
 
 
@@ -63,7 +59,7 @@ def spec_novelty(song, window="hann", win_len=2048, hop_size=256):
     # Log compression
     x = log_compression(x, 100)
     hop_size = 1
-    win_len = 4
+    win_len = 8
     x = abs(x)
     energy = np.empty(shape=(len(x.T)) // hop_size)
     for frame in range(0, len(x.T) - win_len - hop_size - win_len, hop_size):
@@ -73,7 +69,7 @@ def spec_novelty(song, window="hann", win_len=2048, hop_size=256):
         e = np.sum(e)
         energy[frame//hop_size] = e
     # energy = half_w_rect(energy)
-    return energy, x
+    return energy
 
 
 def spec_diff(curr, nextf):

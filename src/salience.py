@@ -14,16 +14,17 @@ print("done importing")
 
 
 print("reading file")
-sr, song = read.read('../Songs/fur_elise.wav')
+# sr, song = read.read('../Songs/fur_elise.wav')
 # sr, song = read.read('../Songs/river_flows_in_you_mono.wav')
-# sr, song = read.read('../Songs/deadmau5.wav')
+sr, song = read.read('../Songs/deadmau5.wav')
 # sr, song = read.read('../Songs/walker.wav')
 song = song*1.0
 
 
 bpm = tempo(song, sr=sr)[0]
 weights = [1.0, 0.5, 0.33, 0.25]
-song = song[:sr*5]
+# song = song[:sr*5]
+song = song[sr*45:sr*90]
 
 
 def non_zero_average_std(arr):
@@ -47,6 +48,7 @@ _, _, x = signal.stft(song, nperseg=2048, nfft=8192, noverlap=1792)  # 1792/1920
 x, _ = utils.magphase(x)
 
 x = spectral.log_spec(x)
+spectral.display(x)
 log = spectral.salience(x)
 log = utils.log_compression(x)
 
@@ -82,15 +84,15 @@ for frame in range(len(log.T)):
 # log[log < 1] = 0
 
 
-# mask = median_filter(abs(log), size=(1, 32))
-# mask[mask > 0] = 1
-# log = mask * log
-# log = maximum_filter(abs(log), size=(1, 8))
+mask = median_filter(abs(log), size=(1, 32))
+mask[mask > 0] = 1
+log = mask * log
+log = maximum_filter(abs(log), size=(1, 8))
 log = median_filter(abs(log), size=(1, 16))
 
 
-# notes = midi_tools.get_notes(log)
-# midi_tools.output_midi("fureliseEighthLimit", notes, bpm, sr)
+notes = midi_tools.get_notes(log)
+midi_tools.output_midi("dd", notes, bpm, sr)
 
 # mask[mask < np.max(mask)/20] = 0
 # mask[mask > 0] = 1

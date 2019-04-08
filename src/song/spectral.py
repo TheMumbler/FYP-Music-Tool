@@ -17,10 +17,10 @@ def my_stft(song, w="hann", win_len=2048, hop_size=128):
     return short
 
 
-def refined_log_freq_spec(spect, bins=128):
+def refined_log_freq_spec(spect, bins=128, nfft=8192):
     # TODO: This function breaks if freq_to_buckets cents is set to anything small as it tries to get negative index
     song_length = len(spect[0])
-    new_full = np.zeros(shape=(bins, song_length), dtype='complex')
+    new_full = np.zeros(shape=(bins, song_length))
     for index in range(1, len(spect)):
         if freq_to_bucket(index) >= 128:
             break
@@ -28,20 +28,18 @@ def refined_log_freq_spec(spect, bins=128):
     return new_full
 
 
-def log_spec(spect, bins=128):
+def log_spec(spect, bins=128, nfft=8192):
     # TODO: help, wont use this for now but will come back to it
     song_length = len(spect[0])
-    H = 256
-    N = 8192
     new_full = np.zeros(shape=(bins, song_length))
     for frame in range(1, len(spect.T)):
         peaks, _ = signal.find_peaks(spect[:, frame])
         # phases = (np.angle(get_phase(peaks, spect[:, frame]) - get_phase(peaks, spect[:, frame-1])-((peaks*H)/N)))/(np.pi*2)
         # phases *= N/H
         for peak in peaks:
-            if freq_to_bucket(peak) >= 128:
+            if freq_to_bucket(peak, nfft) >= 128:
                 break
-            new_full[freq_to_bucket(peak), frame] += spect[peak, frame]
+            new_full[freq_to_bucket(peak, nfft), frame] += spect[peak, frame]
     return new_full
 
 
@@ -92,12 +90,12 @@ def harmonic_summation(frame, peaks, weights, logged=True):
 
 def chromagram(logspec):
     # TODO: Allow this to take the last 8 notes it is missing at the top
-    chroma = np.empty(shape=(12, len(logspec[0])))
+    chroma = np.zeros(shape=(12, len(logspec[0])))
     for i in range(0, len(logspec), 12):
         try:
             chroma += logspec[i:i+12]
         except:
-            pass
+            chroma[0:8] += logspec[i:i+8]
     return chroma
 
 
