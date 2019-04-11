@@ -11,6 +11,16 @@ jupyter notebook for my code playground. I also created a Latex file for holding
 like to refer back to. 
 
 ## My Second Blog Entry
+Talk about book, research papers
+
+
+## My Third Blog Entry
+Talk about ismir website
+
+
+## My Second Blog Entry
+
+## My Second Blog Entry
 
 This week, I learned how to include
 [images](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet#images)

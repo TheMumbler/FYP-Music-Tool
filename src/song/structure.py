@@ -33,7 +33,7 @@ def harmonic_structure(x):
 def sim_to_lag(sim):
     lag = sim.copy()
     idx_slice = [slice(None)] * lag.ndim
-    for i in range(1, len(dist)):
+    for i in range(1, len(sim)):
         idx_slice[1] = i
         lag[tuple(idx_slice)] = np.roll(lag[tuple(idx_slice)], -i)
     return lag

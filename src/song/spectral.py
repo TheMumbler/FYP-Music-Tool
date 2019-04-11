@@ -104,8 +104,8 @@ def display(spec, text="STFT", color='Greys'):
     plt.pcolormesh(np.abs(spec), cmap=plt.cm.get_cmap(color))
     plt.colorbar()
     plt.title(text)
-    plt.ylabel('Frequency ')
-    plt.xlabel('Time ')
+    # plt.ylabel('Frequency ')
+    # plt.xlabel('Time ')
     plt.show()
 
 
