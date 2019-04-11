@@ -4,6 +4,7 @@ from .utils import freq_to_bucket, select_peaks
 import matplotlib.pyplot as plt
 from scipy.ndimage import maximum_filter
 from scipy.ndimage import median_filter
+import math
 
 
 def my_stft(song, w="hann", win_len=2048, hop_size=128):
@@ -28,7 +29,7 @@ def refined_log_freq_spec(spect, bins=128, nfft=8192):
     return new_full
 
 
-def log_spec(spect, bins=128, nfft=8192):
+def log_spec(spect, bins=128):
     # TODO: help, wont use this for now but will come back to it
     song_length = len(spect[0])
     new_full = np.zeros(shape=(bins, song_length))
@@ -37,9 +38,9 @@ def log_spec(spect, bins=128, nfft=8192):
         # phases = (np.angle(get_phase(peaks, spect[:, frame]) - get_phase(peaks, spect[:, frame-1])-((peaks*H)/N)))/(np.pi*2)
         # phases *= N/H
         for peak in peaks:
-            if freq_to_bucket(peak, nfft) >= 128:
+            if freq_to_bucket(peak) >= 128:
                 break
-            new_full[freq_to_bucket(peak, nfft), frame] += spect[peak, frame]
+            new_full[freq_to_bucket(peak), frame] += spect[peak, frame]
     return new_full
 
 
@@ -107,3 +108,7 @@ def display(spec, text="STFT", color='Greys'):
     plt.xlabel('Time ')
     plt.show()
 
+
+def deltaphi(spec, lastphs):
+    # TODO: Add this from book
+    math.atan2()

@@ -50,12 +50,15 @@ def moving_average(data_set, periods=3):
     return np.convolve(data_set, weights, mode='valid')
 
 
-def spec_novelty(song, window="hann", win_len=2048, hop_size=256):
+def spec_novelty(song, window="hann", win_len=2048, hop_size=256, spec=False):
     # TODO: Add average
     # TODO: Fix issue with last few frames
     # Compute STFT
 
-    _, _, x = signal.stft(song, nperseg=win_len, nfft=4096, noverlap=win_len-hop_size)
+    if not spec:
+        _, _, x = signal.stft(song, nperseg=win_len, nfft=4096, noverlap=win_len-hop_size)
+    else:
+        x = song
     # Log compression
     x = log_compression(x, 100)
     hop_size = 1

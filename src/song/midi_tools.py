@@ -3,9 +3,9 @@ from . import utils
 from midiutil import MIDIFile
 
 
-def split_notes(line):
+def split_notes(line, gap_allow=15):
     x = (np.diff(line))
-    x[x < 15] = 0
+    x[x < gap_allow] = 0
     ends = np.nonzero(x)
     notes = []
     start = 0
@@ -60,8 +60,7 @@ def output_midi(name, notes, bpm, sr):
             start = utils.time_to_beats(utils.frame_to_time(item[0], sr=sr), bpm)
             end = utils.time_to_beats(utils.frame_to_time(item[1], sr=sr), bpm)
             duration = end - start
-            if duration >= 0.125:
-                MyMIDI.addNote(track, channel, pitch, start, duration, volume)
+            MyMIDI.addNote(track, channel, pitch, start, duration, volume)
 
     print("track complete")
     with open(name+".mid", "wb") as output_file:

@@ -21,10 +21,20 @@ def chroma_structure(x):
 
 
 def harmonic_structure(x):
-    # TODO: finish this, might need mffc function
+    # TODO: finish this, need mffc function
     x = abs(x.copy())
     x = spectral.refined_log_freq_spec(x)
     x = spectral.chromagram(x)
     dist = cdist(x.T, x.T, metric='cosine')
     dist = 1 - (dist / np.max(dist))
     return dist
+
+
+def sim_to_lag(sim):
+    lag = sim.copy()
+    idx_slice = [slice(None)] * lag.ndim
+    for i in range(1, len(dist)):
+        idx_slice[1] = i
+        lag[tuple(idx_slice)] = np.roll(lag[tuple(idx_slice)], -i)
+    return lag
+

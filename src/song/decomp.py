@@ -13,8 +13,8 @@ def hpss(spec):
     harm = np.empty_like(spec)
     perc = np.empty_like(spec)
     eps = .1
-    harm[:] = median_filter(spec, size=(1, 32))
-    perc[:] = median_filter(spec, size=(32, 1))
+    harm[:] = median_filter(spec, size=(1, 128))
+    perc[:] = median_filter(spec, size=(128, 1))
     mask_h = (((harm + eps)/2)*2)/((harm + perc + eps)*2)
     mask_p = (((perc + eps)/2)*2)/((harm + perc + eps)*2)
     return mask_h * spec * phase, mask_p * spec * phase
