@@ -63,16 +63,19 @@ def freq_to_bucket(freq, cents=100, ref=8.66):
     return floor((1200/cents)*log2(freq/ref)+1.5)
 
 
-def select_peaks(frame, threshold=np.mean):
+def select_peaks(frame, threshold=np.mean, keep=False):
     """Takes a frame of stft and only keeps the peaks"""
     normal = np.abs(frame)
     # normal = smooth(normal)
     height = threshold(normal)
     peaks, _ = signal.find_peaks(normal, height)
-    mask = np.zeros_like(frame)
-    for peak in peaks:
-        mask[peak] = 1
-    return peaks, frame * mask
+    if not keep:
+        mask = np.zeros_like(frame)
+        for peak in peaks:
+            mask[peak] = 1
+        return peaks, frame * mask
+    else:
+        return peaks, frame
 
 
 def magphase(spect):

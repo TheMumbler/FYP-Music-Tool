@@ -34,7 +34,7 @@ def log_spec(spect, bins=128):
     song_length = len(spect[0])
     new_full = np.zeros(shape=(bins, song_length))
     for frame in range(1, len(spect.T)):
-        peaks, _ = signal.find_peaks(spect[:, frame])
+        peaks, _ = signal.find_peaks(spect[:, frame], prominence=5)
         # phases = (np.angle(get_phase(peaks, spect[:, frame]) - get_phase(peaks, spect[:, frame-1])-((peaks*H)/N)))/(np.pi*2)
         # phases *= N/H
         for peak in peaks:
@@ -57,11 +57,11 @@ def salience(spec, logged=True):
     remove all lower value peaks
     """
     for frame in range(len(spec.T)):
-        peaks, spec[:, frame] = select_peaks(spec.T[frame])
+        peaks, spec[:, frame] = select_peaks(spec.T[frame], keep=True)
         test = spec[:, frame]
         test[test > 0] = 1
         spec[:, frame] = test
-        harmonic_summation(spec[:, frame], peaks, [2, 1, .5, .25], logged=logged)
+        harmonic_summation(spec[:, frame], peaks, [1, .5, .33, .25], logged=logged)
     return spec
 
 

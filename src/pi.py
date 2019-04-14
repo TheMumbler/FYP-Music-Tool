@@ -16,9 +16,9 @@ print("done importing")
 # sr, song = read.read('../Songs/fur_elise.wav')
 # sr, song = read.read('../Songs/deadmau5.wav')
 # sr, song = read.read('../Songs/ree.wav')
-sr, song = read.read('../Songs/fur_elise.wav')
+sr, song = read.read('../Songs/river_flows_in_you.wav')
+# sr, song = read.read('../Songs/fur_elise.wav')
 print("reading file")
-# sr, song = read.read('../Songs/river_flows_in_you.wav')
 song = song/1.0
 # song = song[:sr*5]
 print("finding bpm")

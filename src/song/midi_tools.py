@@ -60,7 +60,8 @@ def output_midi(name, notes, bpm, sr):
             start = utils.time_to_beats(utils.frame_to_time(item[0], sr=sr), bpm)
             end = utils.time_to_beats(utils.frame_to_time(item[1], sr=sr), bpm)
             duration = end - start
-            MyMIDI.addNote(track, channel, pitch, start, duration, volume)
+            if duration > .33:
+                MyMIDI.addNote(track, channel, pitch, start, duration, volume)
 
     print("track complete")
     with open(name+".mid", "wb") as output_file:
