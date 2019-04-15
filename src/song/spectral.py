@@ -4,6 +4,7 @@ from .utils import freq_to_bucket, select_peaks
 import matplotlib.pyplot as plt
 from scipy.ndimage import maximum_filter
 from scipy.ndimage import median_filter
+from scipy.ndimage.filters import uniform_filter1d
 import math
 
 
@@ -34,13 +35,16 @@ def log_spec(spect, bins=128):
     song_length = len(spect[0])
     new_full = np.zeros(shape=(bins, song_length))
     for frame in range(1, len(spect.T)):
-        peaks, _ = signal.find_peaks(spect[:, frame], prominence=5)
-        # phases = (np.angle(get_phase(peaks, spect[:, frame]) - get_phase(peaks, spect[:, frame-1])-((peaks*H)/N)))/(np.pi*2)
-        # phases *= N/H
+        # peaks, _ = signal.find_peaks(spect[:, frame], prominence=5)
+        avg = uniform_filter1d(abs(spect[:, frame]), 100)
+        peaks, _ = signal.find_peaks(abs(spect[:, frame]), height=avg, prominence=5)
+        # peaks, _ = signal.find_peaks(abs(spect[:, frame]))
         for peak in peaks:
+            # offset = np.angle(spect[peak, frame] - spect[peak, frame-1] - (((2 * np.pi * 256) / 8192) * 51)) * \
+            #          (8192 / (2 * np.pi * 256))
             if freq_to_bucket(peak) >= 128:
                 break
-            new_full[freq_to_bucket(peak), frame] += spect[peak, frame]
+            new_full[freq_to_bucket(peak), frame] += abs(spect[peak, frame])
     return new_full
 
 

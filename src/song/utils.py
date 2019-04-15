@@ -78,7 +78,9 @@ def select_peaks(frame, threshold=np.mean, keep=False):
         return peaks, frame
 
 
-def magphase(spect):
+def magphase(spect, mag_only=False):
+    if mag_only:
+        return np.abs(spect), 0
     mag = np.abs(spect)
     phase = np.exp(1.j * np.angle(spect))
     return mag, phase
