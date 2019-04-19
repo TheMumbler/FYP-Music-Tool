@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+    {% if not song %}
+      <form method = "POST"
+         enctype = "multipart/form-data">
+         <input type = "file" name = "file" />
+         <input type = "submit"/>
+      </form>
+    {% else %}
+<a href="{{ url_for('tool') }}">
+   <input type="button" value="New Search" />
+</a>
+    {% endif %}
+
+    {% if length %}
+    <h1> Hello {{user}}</h1>
+    <h2> Title: {{fname}}</h2>
+    <h2> Duration: {{length}} </h2>
+    <h2> <a href="{{ url_for('download', user=current_user.username, filename=fname)}}">Download</a> </h2>
+    {% endif %}
+{% endblock %}

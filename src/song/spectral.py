@@ -38,9 +38,10 @@ def log_spec(spect, bins=128):
         # peaks, _ = signal.find_peaks(spect[:, frame], prominence=5)
         avg = uniform_filter1d(abs(spect[:, frame]), 100)
         peaks, _ = signal.find_peaks(abs(spect[:, frame]), height=avg, prominence=5)
+        # peaks, _ = signal.find_peaks(abs(spect[:, frame]), height=np.mean(abs(spect[:, frame])), prominence=avg)
         # peaks, _ = signal.find_peaks(abs(spect[:, frame]))
         for peak in peaks:
-            # offset = np.angle(spect[peak, frame] - spect[peak, frame-1] - (((2 * np.pi * 256) / 8192) * 51)) * \
+            # offset = np.angle(spect[peak, frame] - spect[peak, frame-1] - (((2 * np.pi * 256) / 8192) * frame)) * \
             #          (8192 / (2 * np.pi * 256))
             if freq_to_bucket(peak) >= 128:
                 break
@@ -61,9 +62,9 @@ def salience(spec, logged=True):
     remove all lower value peaks
     """
     for frame in range(len(spec.T)):
-        peaks, spec[:, frame] = select_peaks(spec.T[frame], keep=True)
+        peaks, spec[:, frame] = select_peaks(spec.T[frame], threshold=lambda x: x, keep=True)
         test = spec[:, frame]
-        test[test > 0] = 1
+        # test[test > 0] = 1
         spec[:, frame] = test
         harmonic_summation(spec[:, frame], peaks, [1, .5, .33, .25], logged=logged)
     return spec
@@ -116,3 +117,17 @@ def display(spec, text="STFT", color='Greys'):
 def deltaphi(spec, lastphs):
     # TODO: Add this from book
     math.atan2()
+
+
+def octave_weak(frame):
+    for f in range(len(frame)-12):
+        if frame[f] > 0:
+            frame[f+12] *= 1/frame[f]
+
+
+def non_zero_average_std(arr):
+    nonz = np.nonzero(arr)[0]
+    if nonz.any():
+        return np.mean(arr[nonz]), np.std(arr[nonz])
+    else:
+        return 0, 0

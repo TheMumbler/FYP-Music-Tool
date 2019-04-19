@@ -15,20 +15,21 @@ print("done importing")
 
 
 print("reading file")
-sr, song = read.read('../Songs/fur_elise.wav')
+# sr, song = read.read('../Songs/fur_elise.wav')
 # sr, song = read.read('../Songs/river_flows_in_you.wav')
 # sr, song = read.read('../Songs/deadmau5.wav')
-# sr, song = read.read('../Songs/crab.wav')
+sr, song = read.read('../Songs/crab.wav')
 # sr, song = read.read('../Songs/billie.wav')
 # sr, song = read.read('../Songs/hungarian.wav')
 song = song*1.0
 
 
 bpm = tempo(song, sr=sr)[0]
+print("found bpm")
 weights = [1.0, 0.5, 0.33, 0.25]
-song = song[:sr*5]
-# song = song[sr*43:]
-onsets = onset_detect(song, hop_length=256, units='frames')
+# song = song[:sr*5]
+song = song[sr*43:]
+# onsets = onset_detect(song, hop_length=256, units='frames')
 # plt.plot(song)
 # onsets *= 256
 # for onset in onsets:
@@ -50,22 +51,24 @@ def octave_weak(frame):
             frame[f+12] *= 1/frame[f]
 
 
+_, _, x = signal.stft(song, nperseg=2048, nfft=8192, noverlap=1792)  # , noverlap=1792)  # 1792/1920
 
-_, _, x = signal.stft(song, nperseg=2048, nfft=8192, noverlap=1792)  # 1792/1920
-
-# x, _ = decomp.hpss(x)
+x, _ = decomp.hpss(x)
 # x = abs(x)
 x, _ = utils.magphase(x, mag_only=True)
 
 log = spectral.log_spec(x.copy())
-# x = utils.log_compression(x, 1000)
+# log = spectral.refined_log_freq_spec(x.copy())
+# log = utils.log_compression(log, 1000)
 # onsets /= 256
-for onset in onsets:
-    plt.axvline(x=onset)
+# spectral.display(log)
+
+
 
 log = spectral.salience(log)
-spectral.display(log)
+# spectral.display(log)
 
+# spectral.display(log)
 # mask = median_filter(abs(log), size=(1, 48))
 # mask[mask > 0] = 1
 # log = mask * log
@@ -77,9 +80,16 @@ spectral.display(log)
 for frame in range(len(log.T)):
     f = log[:, frame]
     avg, sd = non_zero_average_std(f)
-    f[f < avg+sd] = 0
+    f[f < avg] = 0
     octave_weak(f)
+    avg, sd = non_zero_average_std(f)
+    f[f < avg/2] = 0
     log[:, frame] = f
+
+# log = utils.log_compression(log, 1000)
+
+# spectral.display(log)
+# exit()
 
 # exit()
 
@@ -110,14 +120,17 @@ log = median_filter(abs(log), size=(1, 16))
 
 # spectral.display(log)
 
+
 #
-# notes = midi_tools.get_notes(log)
-# midi_tools.output_midi("crab", notes, bpm, sr)
+notes = midi_tools.get_notes(log)
+midi_tools.output_midi("crabNoNoteLimit", notes, bpm, sr, hopsize=256)
 
 # mask[mask < np.max(mask)/20] = 0
 # mask[mask > 0] = 1
 # log = mask * log
 # log[log > 0] = 1
-log = utils.log_compression(log,1000)
-spectral.display(log)
+# for onset in onsets:
+#     plt.axvline(x=onset)
+# log = utils.log_compression(log,1000)
+# spectral.display(log)
 

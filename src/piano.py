@@ -1,66 +1,67 @@
-"""
-Read in song
-Perform STFT
-Log the magnitude to increase importance of lower notes
-Bin frequency coefs into midi notes
-Perform harmonic summation
-Remove notes that are below a certain threshold
-Track remaining bins using a voicing function
-Tidy up final product with removing notes that show up very quickly then go away (inaccuracies)
-Convert final product into midi file
-"""
+# from src.song import read
+from .song import spectral
+from .song import utils
+from scipy import signal
+from scipy.ndimage import median_filter
+from scipy.ndimage import maximum_filter
+from .song import midi_tools
+from librosa.beat import tempo
 
-# Read in song
-import scipy.io.wavfile
-from utils import *
-from math import log10
-import numpy as np
+from .song.spectral import octave_weak, non_zero_average_std
 
-# sr, song = scipy.io.wavfile.read('../Songs/fur_elise.wav')
-sr, song = scipy.io.wavfile.read('../Songs/river_flows_in_you_mono.wav')
-# sr, song = scipy.io.wavfile.read('../Songs/deadmau5.wav')
-# sr, song = scipy.io.wavfile.read('../Songs/sin.wav')
-
-# We will just take the 1st 5 secs
-song = song[:sr*5]
-
-# Peform STFT
-
-spec = my_stft(song)
-display(spec)
-peaks = []
-for i in range(len(spec.T)):
-    peak, spec[:, i] = select_peaks(spec[:, i])
-    peaks.append(peak)
+# print("done importing")
+#
+#
+# print("reading file")
+# # sr, song = read.read('../Songs/fur_elise.wav')
+# sr, song = read.read('../Songs/river_flows_in_you.wav')
+# # sr, song = read.read('../Songs/deadmau5.wav')
+# # sr, song = read.read('../Songs/crab.wav')
+# # sr, song = read.read('../Songs/billie.wav')
+# # sr, song = read.read('../Songs/hungarian.wav')
+# song = song*1.0
+#
+#
+# bpm = tempo(song, sr=sr)[0]
+# weights = [1.0, 0.5, 0.33, 0.25]
+#
 
 
-display(spec)
+# _, _, x = signal.stft(song, nperseg=2048, nfft=8192, noverlap=1792)
+#
+# x, _ = utils.magphase(x, mag_only=True)
 
-spec = refined_log_freq_spec(spec)
+#
 
-display(spec)
+def piano_ver1(x, name, user, bpm, sr, sections=None):
+    # current peak pick for log_spec
+    # avg = uniform_filter1d(abs(spect[:, frame]), 100)
+    # peaks, _ = signal.find_peaks(abs(spect[:, frame]), height=avg, prominence=5)
+    # TODO: Remove these lines
+    x = x[:sr*30]
+    _, _, x = signal.stft(x, nperseg=2048, nfft=8192, noverlap=1792)
 
+    x, _ = utils.magphase(x, mag_only=True)
+    # TODO: ^^ ^^ ^^
 
-for i in range(len(spec.T)):
-    tes = spec[:, i]
-    tes = np.where(20*np.log10(np.max(tes)/tes) < 80, tes, 0)
-    spec[:, i] = tes
+    log = spectral.log_spec(x.copy())
+    log = spectral.salience(log)
 
-display(spec)
+    for frame in range(len(log.T)):
+        f = log[:, frame]
+        avg, sd = non_zero_average_std(f)
+        f[f < avg] = 0
+        octave_weak(f)
+        avg, sd = non_zero_average_std(f)
+        f[f < avg/2] = 0
+        log[:, frame] = f
 
+    mask = median_filter(abs(log), size=(1, 32))
+    mask[mask > 0] = 1
+    log = mask * log
+    log = maximum_filter(abs(log), size=(1, 8))
+    log = median_filter(abs(log), size=(1, 16))
 
-for i in range(len(spec.T)):
-    spec[:, i] = harmsumm(spec[:, i], peaks[i])
-
-display(spec)
-
-
-
-
-# x = mag_to_db(abs(spec))
-# for i in range(len(x[0])):
-#     tes = x[:, i]
-#     tes[tes != np.max(tes)] = 0
-#     x[:, i] = tes
-# display(x)
+    notes = midi_tools.get_notes(log)
+    midi_tools.output_midi(name, notes, bpm, sr, hopsize=256, directory=user)
 

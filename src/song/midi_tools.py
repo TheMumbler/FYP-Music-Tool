@@ -1,6 +1,7 @@
 import numpy as np
 from . import utils
 from midiutil import MIDIFile
+import os
 
 
 def split_notes(line, gap_allow=15):
@@ -36,13 +37,14 @@ def get_notes(spec):
     return notes
 
 
-def output_midi(name, notes, bpm, sr):
+def output_midi(name, notes, bpm, sr, hopsize=256, directory="testy"):
     """
     :param name: name of the output file
     :param notes: a dictionary with an entry for each midi note each containing the times of the notes being hit
                   see get_notes
     :param bpm: the bpm of the input song
     :param sr: sample rate
+    :param hopsize: the hop size of the spectrogram used
 
     outputs a midi file to the current directory
     """
@@ -57,12 +59,13 @@ def output_midi(name, notes, bpm, sr):
     for key, items in notes.items():
         pitch = key
         for item in items:
-            start = utils.time_to_beats(utils.frame_to_time(item[0], sr=sr), bpm)
-            end = utils.time_to_beats(utils.frame_to_time(item[1], sr=sr), bpm)
+            start = utils.time_to_beats(utils.frame_to_time(item[0], hop_size=hopsize, sr=sr), bpm)
+            end = utils.time_to_beats(utils.frame_to_time(item[1], hop_size=hopsize, sr=sr), bpm)
             duration = end - start
-            if duration > .33:
-                MyMIDI.addNote(track, channel, pitch, start, duration, volume)
+            # if duration > .15:
+            MyMIDI.addNote(track, channel, pitch, start, duration, volume)
 
     print("track complete")
-    with open(name+".mid", "wb") as output_file:
+    os.makedirs(os.path.dirname(directory + "/" + name + ".mid"), exist_ok=True)
+    with open(directory + "/" + name+".mid", "wb") as output_file:
         MyMIDI.writeFile(output_file)
