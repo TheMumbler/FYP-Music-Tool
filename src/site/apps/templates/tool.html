@@ -1,11 +1,13 @@
 {% extends "base.html" %}
-{% block content %}
+{% block app_content %}
     {% if not song %}
       <form method = "POST"
          enctype = "multipart/form-data">
          <input type = "file" name = "file" />
          <input type = "submit"/>
       </form>
+
+
     {% else %}
 <a href="{{ url_for('tool') }}">
    <input type="button" value="New Search" />

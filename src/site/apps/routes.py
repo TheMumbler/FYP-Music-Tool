@@ -74,24 +74,26 @@ def tool():
         length = (len(song)/sr)
         print(length)
         print(current_user.username)
-        piano.piano_ver1(song, f.filename[:5], "apps/static/" + current_user.username, 60, sr)
+        piano.piano_ver1(song, f.filename[:-4], "apps/static/" + current_user.username, 60, sr)
         print('file uploaded successfully')
         return render_template("tool.html",
                                user=current_user.username,
                                length=length,
                                song=True,
                                data=wav,
-                               fname=f.filename[:5] + ".mid")
+                               fname=f.filename[:-4] + ".mid")
     return render_template("tool.html", user=current_user.username)
 
 
 @app.route('/<user>/<path:filename>', methods=['GET', 'POST'])
 def download(user, filename):
     uploads = os.path.join(current_app.root_path, "static", user)
-    print(current_app.root_path)
-    print(uploads)
     return send_from_directory(directory=uploads, filename=filename)
 
+
+@app.route('/user/<username>')
+def user(user):
+    return render_template("user.html", user=user)
 # @app.route('/working')
 # def uploaded():
 #     user = {'username': 'Paddy'}
