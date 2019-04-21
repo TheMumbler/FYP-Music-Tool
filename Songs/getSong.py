@@ -5,7 +5,7 @@ import subprocess
 link = input()
 
 # yt = YouTube("https://www.youtube.com/watch?v=mTwoMGCtPT8")
-yt = YouTube("https://www.youtube.com/watch?v=yaJx0Gj_LCY")
+yt = YouTube("https://www.youtube.com/watch?v=ziAqB9nb_To")
 
 # yt = YouTube("https://www.youtube.com/watch?v=LSwXh1Y5thY")
 
@@ -19,7 +19,7 @@ print(title)
 t[0].download()
 print("ffmpeg -i \"" + title + ".mp4\" \"" + title + ".wav\"")
 # TODO: CONVERT SONG
-subprocess.call("ffmpeg -i \"" + title + ".mp4\" -ac 1 \"" + "billie.wav\"")
+subprocess.call("ffmpeg -i \"" + title + ".mp4\" -ac 1 \"" + "tycho2.wav\"")
 
 # ffmpeg -i my_video.mp4 -c copy -map 0:a output_audio.mp4
 # TODO: REMOVE OLD SONG

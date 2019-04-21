@@ -1,6 +1,7 @@
 # from src.song import read
 from .song import spectral
 from .song import utils
+from .song import decomp
 from scipy import signal
 from scipy.ndimage import median_filter
 from scipy.ndimage import maximum_filter
@@ -22,7 +23,6 @@ from .song.spectral import octave_weak, non_zero_average_std
 # song = song*1.0
 #
 #
-# bpm = tempo(song, sr=sr)[0]
 # weights = [1.0, 0.5, 0.33, 0.25]
 #
 
@@ -33,15 +33,18 @@ from .song.spectral import octave_weak, non_zero_average_std
 
 #
 
-def piano_ver1(x, name, user, bpm, sr, sections=None):
+def piano_ver1(x, name, user, bpm, sr, hp=False, sections=None):
     # current peak pick for log_spec
     # avg = uniform_filter1d(abs(spect[:, frame]), 100)
     # peaks, _ = signal.find_peaks(abs(spect[:, frame]), height=avg, prominence=5)
+    x = x*1.0
+    bpm = tempo(x, sr=sr)[0]
     # TODO: Remove these lines
     x = x[:sr*30]
     _, _, x = signal.stft(x, nperseg=2048, nfft=8192, noverlap=1792)
-
     x, _ = utils.magphase(x, mag_only=True)
+    if hp:
+        x, _ = decomp.hpss(x, 2)
     # TODO: ^^ ^^ ^^
 
     log = spectral.log_spec(x.copy())
@@ -63,5 +66,5 @@ def piano_ver1(x, name, user, bpm, sr, sections=None):
     log = median_filter(abs(log), size=(1, 16))
 
     notes = midi_tools.get_notes(log)
-    midi_tools.output_midi(name, notes, bpm, sr, hopsize=256, directory=user)
+    return midi_tools.output_midi(name, notes, bpm, sr, hopsize=256, directory=user)
 

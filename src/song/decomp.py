@@ -3,7 +3,7 @@ from scipy.ndimage import median_filter
 from .utils import magphase
 
 
-def hpss(spec):
+def hpss(spec, pow=1, soft=True, ksize=32):
     """Split the wave into harmonic and percussive"""
     # TODO: Add option of binary masking instead of soft masking
     if np.iscomplexobj(spec):
@@ -13,9 +13,13 @@ def hpss(spec):
     harm = np.empty_like(spec)
     perc = np.empty_like(spec)
     eps = .1
-    harm[:] = median_filter(spec, size=(1, 128))
-    perc[:] = median_filter(spec, size=(128, 1))
-    mask_h = (((harm + eps)/2)*2)/((harm + perc + eps)*2)
-    mask_p = (((perc + eps)/2)*2)/((harm + perc + eps)*2)
+    harm[:] = median_filter(spec, size=(1, ksize))
+    perc[:] = median_filter(spec, size=(ksize, 1))
+    if soft:
+        mask_h = (((harm + eps)/2)**pow)/((harm + perc + eps)**pow)
+        mask_p = (((perc + eps)/2)**pow)/((harm + perc + eps)**pow)
+    else:
+        mask_h = (harm >= perc).astype(int)
+        mask_p = (perc > harm).astype(int)
     return mask_h * spec * phase, mask_p * spec * phase
 
