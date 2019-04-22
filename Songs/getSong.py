@@ -1,26 +1,34 @@
 from pytube import YouTube
 import subprocess
+import os
+from werkzeug import secure_filename
 # TODO: Make proper functions of below
 # TODO: READ INPUT (URL)
-link = input()
+# link = input()
 
 # yt = YouTube("https://www.youtube.com/watch?v=mTwoMGCtPT8")
-yt = YouTube("https://www.youtube.com/watch?v=ziAqB9nb_To")
+# yt = YouTube("https://www.youtube.com/watch?v=ziAqB9nb_To")
+yt = YouTube("https://www.youtube.com/watch?v=DyDfgMOUjCI")
 
-# yt = YouTube("https://www.youtube.com/watch?v=LSwXh1Y5thY")
+# yt = YouTube("https://www.youtube.com/watch?v=3X9LvC9WkkQ")
 
 # TODO: DOWNLOAD SONG
 
-print(yt.streams.all())
-t = yt.streams.filter(only_audio=True).all()
+# print(yt.streams.all())
+# t = yt.streams.filter(only_audio=True).all()
+t = yt.streams.filter(file_extension='mp4').all()
+# t = yt.streams.all()
+# t = yt.get('mp4', '480p')
 print(t)
 title = yt.title
 print(title)
-t[0].download()
-print("ffmpeg -i \"" + title + ".mp4\" \"" + title + ".wav\"")
+fname = secure_filename(title.replace(".", ""))
+print(fname)
+print(t, "THIS IS THE FILE")
+t[0].download(filename=fname)
 # TODO: CONVERT SONG
-subprocess.call("ffmpeg -i \"" + title + ".mp4\" -ac 1 \"" + "tycho2.wav\"")
-
+subprocess.call("ffmpeg -i \"" + fname + "\" -ac 1 -f wav \"" + "hungarian.wav\"")
+os.remove(fname + ".mp4")
 # ffmpeg -i my_video.mp4 -c copy -map 0:a output_audio.mp4
 # TODO: REMOVE OLD SONG
 

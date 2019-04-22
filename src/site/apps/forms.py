@@ -32,4 +32,4 @@ class RegistrationForm(FlaskForm):
 
 class AddFile(FlaskForm):
     file = FileField(validators=[DataRequired()])
-    submit = SubmitField('Upload')
+    submit = SubmitField('Analyse')

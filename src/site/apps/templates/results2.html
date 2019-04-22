@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+<script src="https://unpkg.com/wavesurfer.js"></script>
+<script type='text/javascript' src='//www.midijs.net/lib/midi.js'></script>
+
+<a href="{{ url_for('tool') }}">
+   <input type="button" value="New Search" />
+</a>
+    <div id="waveform"></div>
+    <!--<h1> Hello {{user}}</h1>-->
+    <!--<div class="p-3 mb-2 bg-primary text-white">.bg-primary</div>-->
+    <!--<div class="container mb-2 bg-primary text-white">  Title: {{fname}}</div>-->
+    <!--<div class="container"> Duration: {{length}} </div>-->
+    <!--<a href="#" onclick="MIDIjs.play('/paddy/440.mid');">Play</a>-->
+    <!--<h2> <a href="{{ url_for('download', user=current_user.username, filename=fname)}}">Download</a> </h2>-->
+
+
+<script>
+    var wavesurfer = WaveSurfer.create({
+    container: '#waveform',
+    waveColor: 'black',
+    progressColor: 'purple'
+    });
+    wavesurfer.load(String.raw`{{location}}`);
+</script>
+
+{% endblock %}
+

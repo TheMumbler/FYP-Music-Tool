@@ -11,9 +11,6 @@ import os
 from src import piano
 
 from src.song.read import read
-from flask_uploads import UploadSet, AUDIO
-
-audio = UploadSet("song", AUDIO)
 
 
 @app.route('/')
@@ -64,37 +61,30 @@ def logout():
 @app.route('/tool', methods=['GET', 'POST'])
 @login_required
 def tool():
-    # user = {'username': 'Paddy'}
     if request.method == 'POST':
         f = request.files['file']
-        # wav = io.BytesIO(f.read())
-        f.save(os.path.join(app.config['UPLOAD_FOLDER'], f.filename))
-        # sr, song = read(wav)
-        # print(sr)
-        # length = (len(song)/sr)
-        # print(length)
+        name = secure_filename(f.filename)
+        user = current_user.username
+        path = os.path.join(app.config['UPLOAD_FOLDER'], user)
+        os.makedirs(path, exist_ok=True)
+        f.save(os.path.join(path, name))
         print(current_user.username)
-        # piano.piano_ver1(song, f.filename[:-4], "apps/static/" + current_user.username, 60, sr)
         print('file uploaded successfully')
-        return redirect(url_for('results', user=current_user.username, filename=f.filename))
-        # "results.html",
-        #                        user=current_user.username,
-        #                        length=length,
-        #                        song=True,
-        #                        data=list(song),
-        #                        fname=f.filename[:-4] + ".mid")
+        return render_template('results.html',
+                               user=user,
+                               filename=f.filename)
     form = AddFile()
     return render_template("tool.html", user=current_user.username, form=form)
 
 
-@app.route('/<user>/<filename>', methods=['GET', 'POST'])
-def results(user, filename):
-    location = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-    print(filename, "DSADSAD")
-    sr, song = read(os.path.join(location))
-    path = piano.piano_ver1(song, filename[:-4], "apps/static/" + current_user.username, 60, sr)
-    print(path)
-    return render_template("results.html", user=user, length=(len(song)/sr), wavfname=filename, fname=filename[:-4] + ".mid", location=location)
+@app.route('/<user>', methods=['GET', 'POST'])
+def results(user):
+    # location = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    # location = location.replace("\\", "/")
+    # print(filename, "DSADSAD")
+    # print(location, "sdfas")
+    # sr, song = read(os.path.join(location))
+    return render_template("results.html")
 
 
 @app.route('/<user>/<path:filename>', methods=['GET', 'POST'])

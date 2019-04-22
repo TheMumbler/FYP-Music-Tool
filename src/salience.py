@@ -18,7 +18,7 @@ print("reading file")
 # sr, song = read.read('../Songs/fur_elise.wav')
 # sr, song = read.read('../Songs/river_flows_in_you.wav')
 # sr, song = read.read('../Songs/deadmau5.wav')
-sr, song = read.read('../Songs/tycho2.wav')
+sr, song = read.read('../Songs/testtt.wav')
 song = read.startend(song)
 # sr, song = read.read('../Songs/billie.wav')
 # sr, song = read.read('../Songs/hungarian.wav')
@@ -55,7 +55,7 @@ def octave_weak(frame):
 
 _, _, x = signal.stft(song, nperseg=2048, nfft=8192, noverlap=1792)  # , noverlap=1792)  # 1792/1920
 
-x, _ = decomp.hpss(x, 2)
+# x, _ = decomp.hpss(x, soft=False)
 # x = abs(x)
 x, _ = utils.magphase(x, mag_only=True)
 
@@ -125,7 +125,7 @@ log = median_filter(abs(log), size=(1, 16))
 
 #
 notes = midi_tools.get_notes(log)
-midi_tools.output_midi("tycho2", notes, bpm, sr, hopsize=256)
+midi_tools.output_midi("tsesNhpss", notes, bpm, sr, hopsize=256)
 
 # mask[mask < np.max(mask)/20] = 0
 # mask[mask > 0] = 1
