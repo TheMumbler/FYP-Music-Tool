@@ -67,30 +67,34 @@ def tool():
         user = current_user.username
         path = os.path.join(app.config['UPLOAD_FOLDER'], user)
         os.makedirs(path, exist_ok=True)
+        # os.makedirs(path, exist_ok=True)
+        print(path)
+        if len(os.listdir(path)) > 0:
+            print("FASFEGEASDGDSGDS WAAJA")
+            todel = os.path.join(path, os.listdir(path)[0])
+            os.remove(todel)
         f.save(os.path.join(path, name))
+        # f.save(name)
         print(current_user.username)
         print('file uploaded successfully')
-        return render_template('results.html',
-                               user=user,
-                               filename=f.filename)
+        return redirect(url_for('results', user=user))
+                              # filename=f.filename)
     form = AddFile()
     return render_template("tool.html", user=current_user.username, form=form)
 
 
-@app.route('/<user>', methods=['GET', 'POST'])
+@app.route('/<user>/results', methods=['GET', 'POST'])
 def results(user):
-    # location = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-    # location = location.replace("\\", "/")
-    # print(filename, "DSADSAD")
-    # print(location, "sdfas")
+    userpath = os.path.join(app.config['UPLOAD_FOLDER'], user)
+    currfile = os.listdir(userpath)[0]
     # sr, song = read(os.path.join(location))
-    return render_template("results.html")
+    return render_template("results.html" , wavpath=currfile)
 
 
 @app.route('/<user>/<path:filename>', methods=['GET', 'POST'])
 def download(user, filename):
-    uploads = os.path.join(current_app.root_path, "static", user)
-    print(uploads)
+    uploads = os.path.join(app.config['UPLOAD_FOLDER'], user)
+    print(uploads, "UPLOADS")
     return send_from_directory(directory=uploads, filename=filename)
 
 

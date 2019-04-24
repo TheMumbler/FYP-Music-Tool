@@ -18,12 +18,13 @@ print("reading file")
 # sr, song = read.read('../Songs/fur_elise.wav')
 # sr, song = read.read('../Songs/river_flows_in_you.wav')
 # sr, song = read.read('../Songs/deadmau5.wav')
-sr, song = read.read('../Songs/testtt.wav')
+sr, song = read.read('../Songs/crab.wav')
 song = read.startend(song)
 # sr, song = read.read('../Songs/billie.wav')
 # sr, song = read.read('../Songs/hungarian.wav')
 song = song*1.0
 
+print(sr)
 
 bpm = tempo(song, sr=sr)[0]
 print("found bpm")
@@ -53,11 +54,11 @@ def octave_weak(frame):
             frame[f+12] *= 1/frame[f]
 
 
-_, _, x = signal.stft(song, nperseg=2048, nfft=8192, noverlap=1792)  # , noverlap=1792)  # 1792/1920
+_, _, x = signal.stft(song, nperseg=2048, nfft=8192, noverlap=1536)  # , noverlap=1792)  # 1792/1920
 
-# x, _ = decomp.hpss(x, soft=False)
-# x = abs(x)
-x, _ = utils.magphase(x, mag_only=True)
+x, _ = decomp.hpss(x, 2)
+x = abs(x)
+# x, _ = utils.magphase(x, mag_only=True)
 
 log = spectral.log_spec(x.copy())
 # log = spectral.refined_log_freq_spec(x.copy())
@@ -114,18 +115,18 @@ for frame in range(len(log.T)):
 # log[log < 1] = 0
 
 
-mask = median_filter(abs(log), size=(1, 32))
+mask = median_filter(abs(log), size=(1, 16))
 mask[mask > 0] = 1
 log = mask * log
-log = maximum_filter(abs(log), size=(1, 8))
-log = median_filter(abs(log), size=(1, 16))
+# log = maximum_filter(abs(log), size=(1, 4))
+# log = median_filter(abs(log), size=(1, 8))
 
 # spectral.display(log)
 
 
 #
 notes = midi_tools.get_notes(log)
-midi_tools.output_midi("tsesNhpss", notes, bpm, sr, hopsize=256)
+midi_tools.output_midi("crab512nomaxfil", notes, bpm, sr, hopsize=512)
 
 # mask[mask < np.max(mask)/20] = 0
 # mask[mask > 0] = 1

@@ -9,14 +9,17 @@
    <input type="button" value="New Search" />
 </a>
     <div id="waveform"></div>
-
+<div> Hi {{ current_user.username }}
+    <img src="{{ url_for('download', user=current_user.username, filename="test.jpg") }}" alt="Girl in a jacket">
+</div>
 <script>
     var wavesurfer = WaveSurfer.create({
     container: '#waveform',
     waveColor: 'black',
     progressColor: 'purple'
     });
-    wavesurfer.load();
+    wavesurfer.load("{{ url_for('download', user=current_user.username, filename=wavpath) }}");
+
 </script>
 
 {% endblock %}
