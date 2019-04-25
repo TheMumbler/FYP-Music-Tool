@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, FileField
-from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
+from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, URL, StopValidation, Regexp
 from .models import User
 
 
@@ -15,8 +15,7 @@ class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
-    password2 = PasswordField(
-        'Repeat Password', validators=[DataRequired(), EqualTo('password')])
+    password2 = PasswordField('Repeat Password', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Register')
 
     def validate_username(self, username):
@@ -32,4 +31,11 @@ class RegistrationForm(FlaskForm):
 
 class AddFile(FlaskForm):
     file = FileField(validators=[DataRequired()])
+    submit = SubmitField('Analyse')
+
+
+class YouTubeLink(FlaskForm):
+    youtube = r"^(https?://)?(www.)?(youtube.com|youtu.?be)/.+$"
+    link = StringField(validators=[DataRequired(),
+                                   Regexp(regex=youtube, message="Must be a valid youtube link")])
     submit = SubmitField('Analyse')

@@ -2,25 +2,27 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
-<script src="https://unpkg.com/wavesurfer.js"></script>
-<script type='text/javascript' src='//www.midijs.net/lib/midi.js'></script>
+    <script src="https://unpkg.com/wavesurfer.js"></script>
+    <script type='text/javascript' src='//www.midijs.net/lib/midi.js'></script>
 
-<a href="{{ url_for('tool') }}">
-   <input type="button" value="New Search" />
-</a>
+
     <div id="waveform"></div>
-<div> Hi {{ current_user.username }}
-    <img src="{{ url_for('download', user=current_user.username, filename="test.jpg") }}" alt="Girl in a jacket">
-</div>
-<script>
-    var wavesurfer = WaveSurfer.create({
-    container: '#waveform',
-    waveColor: 'black',
-    progressColor: 'purple'
-    });
-    wavesurfer.load("{{ url_for('download', user=current_user.username, filename=wavpath) }}");
+    <div> Hi {{ current_user.username }}
+        <img src="{{ url_for('download', user=current_user.username, filename="test.jpg") }}" alt="Girl in a jacket">
+    </div>
 
-</script>
+    <a href="{{ url_for('tool') }}">
+       <input type="button" value="New Search" />
+    </a>
+    <script>
+        var wavesurfer = WaveSurfer.create({
+        container: '#waveform',
+        waveColor: 'black',
+        progressColor: 'purple'
+        });
+        wavesurfer.load("{{ url_for('download', user=current_user.username, filename=wavpath) }}");
+
+    </script>
 
 {% endblock %}
 

@@ -2,7 +2,7 @@ from . import app
 from flask import render_template, url_for, request, redirect, flash, send_from_directory, current_app
 from flask_login import current_user, login_user, logout_user, login_required
 from .models import User
-from .forms import LoginForm, RegistrationForm, AddFile
+from .forms import LoginForm, RegistrationForm, AddFile, YouTubeLink
 from werkzeug import secure_filename
 from werkzeug.urls import url_parse
 from . import db
@@ -10,7 +10,7 @@ import io
 import os
 from src import piano
 
-from src.song.read import read
+from src.song import read
 
 
 @app.route('/')
@@ -61,26 +61,29 @@ def logout():
 @app.route('/tool', methods=['GET', 'POST'])
 @login_required
 def tool():
-    if request.method == 'POST':
-        f = request.files['file']
-        name = secure_filename(f.filename)
+    form = AddFile()
+    form2 = YouTubeLink()
+    if request.method == "POST":
         user = current_user.username
         path = os.path.join(app.config['UPLOAD_FOLDER'], user)
         os.makedirs(path, exist_ok=True)
-        # os.makedirs(path, exist_ok=True)
-        print(path)
         if len(os.listdir(path)) > 0:
-            print("FASFEGEASDGDSGDS WAAJA")
             todel = os.path.join(path, os.listdir(path)[0])
             os.remove(todel)
-        f.save(os.path.join(path, name))
-        # f.save(name)
-        print(current_user.username)
-        print('file uploaded successfully')
-        return redirect(url_for('results', user=user))
-                              # filename=f.filename)
-    form = AddFile()
-    return render_template("tool.html", user=current_user.username, form=form)
+
+        if form.validate_on_submit():
+            f = request.files['file']
+            name = secure_filename(f.filename)
+            f.save(os.path.join(path, name))
+            print('file uploaded successfully for user {}'.format(user))
+            return redirect(url_for('results', user=user))
+
+        elif form2.validate_on_submit():
+            link = request.form.get('link')
+            read.get_youtube(link, path)
+            return redirect(url_for('results', user=user))
+
+    return render_template("tool.html", user=current_user.username, fileform=form, youtubeform=form2)
 
 
 @app.route('/<user>/results', methods=['GET', 'POST'])
@@ -98,10 +101,13 @@ def download(user, filename):
     return send_from_directory(directory=uploads, filename=filename)
 
 
+@app.route('/<user>/<path:filename>', methods=['GET', 'POST'])
+def downloadMidi(user, filename):
+    uploads = os.path.join(app.config['DOWNLOAD_FOLDER'], user)
+    print(uploads, "DOWNLOADS")
+    return send_from_directory(directory=uploads, filename=filename)
+
+
 @app.route('/user/<username>')
 def user(user):
     return render_template("user.html", user=user)
-# @app.route('/working')
-# def uploaded():
-#     user = {'username': 'Paddy'}
-#     return render_template("results.html", user=user)

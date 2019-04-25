@@ -9,12 +9,13 @@ from song import beat
 from scipy.ndimage import maximum_filter
 from scipy.ndimage import rotate
 from song import midi_tools
+from librosa.feature import chroma_stft
 
 # sr, song = read.read('../Songs/fur_elise.wav')
 # sr, song = read.read('../Songs/deadmau5.wav')
 sr, song = read.read('../Songs/hungarian.wav')
 # sr, song = read.read('../Songs/crab.wav')
-song = read.startend(song)
+song = song * 1.0
 
 
 # B=5
@@ -24,6 +25,8 @@ x = abs(x)
 x = spectral.log_spec(x)
 
 x = spectral.chromagram(x)
+# x = chroma_stft(song, sr=sr, n_fft=2048, hop_length=512)
+
 
 dist = cdist(x.T, x.T, metric='cosine')
 dist = 1 - dist
@@ -32,7 +35,7 @@ dist[np.isnan(dist)] = 0
 footie = np.zeros(shape=(100, 100))
 np.fill_diagonal(footie, 1)
 
-# spectral.display(dist)
+spectral.display(dist)
 
 mask = median_filter(abs(dist), footprint=footie)
 mask[mask < .9] = 0
@@ -40,7 +43,7 @@ mask[mask > 0] = 1
 dist = dist*mask
 
 
-# spectral.display(dist)
+spectral.display(dist)
 
 
 l = structure.sim_to_lag(dist)
