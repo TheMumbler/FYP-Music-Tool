@@ -88,7 +88,7 @@ def results(user):
     userpath = os.path.join(app.config['UPLOAD_FOLDER'], user)
     currfile = os.listdir(userpath)[0]
     # sr, song = read(os.path.join(location))
-    return render_template("results.html" , wavpath=currfile)
+    return render_template("results.html", wavpath=currfile)
 
 
 @app.route('/<user>/<path:filename>', methods=['GET', 'POST'])
