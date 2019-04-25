@@ -1,10 +1,12 @@
 import scipy.io.wavfile
 import subprocess
 import os
+from pytube import YouTube
 
 
-def read(file):
+def read(file, delete=True):
     # TODO: Use ffmpeg to convert song to mono and Wav format
+    file = os.path.abspath(file)
     if file.endswith(".wav"):
         sr, song = scipy.io.wavfile.read(file)
         song = startend(song)
@@ -15,7 +17,8 @@ def read(file):
         subprocess.call("ffmpeg -loglevel panic -i " + file + " -ac 1 -f wav " + new)
         sr, song = scipy.io.wavfile.read(new)
         song = startend(song)
-        os.remove(file)
+        if delete:
+            os.remove(file)
     return sr, song
 
 
@@ -39,3 +42,16 @@ def get_filename(address):
 def get_path(address):
     path = address.split("\\")
     return "\\".join(path[:-1]) + "\\"
+
+
+def get_youtube(link, dest=None):
+    yt = YouTube(link)
+    t = yt.streams.filter(file_extension='mp4').first()
+    t.download(filename="youtube", output_path=dest)
+    file = os.path.join(dest, "youtube.mp4")
+    new = os.path.join(dest, "converted.wav")
+    subprocess.call("ffmpeg -loglevel panic -i " + file + " -ac 1 -f wav " + new)
+    os.remove(file)
+
+
+

@@ -25,7 +25,7 @@ print(title)
 fname = title  #  secure_filename(title.replace(".", ""))
 print(fname)
 print(t, "THIS IS THE FILE")
-t[0].download(filename=fname)
+t[0].download(filename="t")
 # TODO: CONVERT SONG
 subprocess.call("ffmpeg -i \"" + fname + ".mp4\" -ac 1 -f wav \"" + "claire.wav\"")
 # os.remove(fname + ".mp4")
