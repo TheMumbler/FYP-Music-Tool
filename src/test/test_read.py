@@ -1,6 +1,6 @@
 from src.song import read
 from shutil import copyfile
-
+import numpy as np
 
 def test_filename_raw():
     assert read.get_filename(r"C:\Users\P\PycharmProjects\2019-ca400-ferryp2\src\test\test.mp3") == "test.mp3"
@@ -33,3 +33,10 @@ def test_read_mp3():
 def test_startend():
     arr = [0] * 5 + [1] * 5 + [0] * 10
     assert read.startend(arr) == [1, 1, 1, 1, 1]
+
+
+def test_startend_np():
+    arr = np.array([0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0])
+    after = read.startend(arr)
+    assert after.all() == np.array([1, 1, 1, 1, 1]).all()
+    assert type(after) is np.ndarray

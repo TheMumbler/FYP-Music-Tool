@@ -7,18 +7,16 @@
 
 
     <div id="waveform"></div>
-    <div> Hi {{ current_user.username }}
-        <img src="{{ url_for('download', user=current_user.username, filename="test.jpg") }}" alt="Girl in a jacket">
-    </div>
 
     <a href="{{ url_for('tool') }}">
        <input type="button" value="New Search" />
     </a>
+
     <script>
         var wavesurfer = WaveSurfer.create({
-        container: '#waveform',
-        waveColor: 'black',
-        progressColor: 'purple'
+            container: '#waveform',
+            waveColor: 'black',
+            progressColor: 'purple'
         });
         wavesurfer.load("{{ url_for('download', user=current_user.username, filename=wavpath) }}");
 

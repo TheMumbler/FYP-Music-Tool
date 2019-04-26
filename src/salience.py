@@ -26,11 +26,12 @@ song = song*1.0
 
 print(sr)
 
-bpm = tempo(song, sr=sr)[0]
+bpm = tempo(song, sr=sr) # [0]
+# bpm = 130
 print("found bpm")
 weights = [1.0, 0.5, 0.33, 0.25]
 # song = song[:sr*5]
-song = song[:sr*180]
+song = song[sr*43:sr*180]
 print(sr)
 # onsets = onset_detect(song, hop_length=256, units='frames')
 # plt.plot(song)
@@ -56,7 +57,7 @@ def octave_weak(frame):
 
 _, _, x = signal.stft(song, nperseg=2048, nfft=8192, noverlap=1536)  # , noverlap=1792)  # 1792/1920
 
-x, _ = decomp.hpss(x, 2)
+x, _ = decomp.hpss(x, 2, ksize=16)
 x = abs(x)
 # x, _ = utils.magphase(x, mag_only=True)
 
@@ -118,15 +119,15 @@ for frame in range(len(log.T)):
 mask = median_filter(abs(log), size=(1, 16))
 mask[mask > 0] = 1
 log = mask * log
-# log = maximum_filter(abs(log), size=(1, 4))
-# log = median_filter(abs(log), size=(1, 8))
+log = maximum_filter(abs(log), size=(1, 4))
+log = median_filter(abs(log), size=(1, 8))
 
 # spectral.display(log)
 
 
 #
 notes = midi_tools.get_notes(log)
-midi_tools.output_midi("crab512nomaxfil", notes, bpm, sr, hopsize=512)
+midi_tools.output_midi("crab512halfHpss", notes, bpm, sr, hopsize=512)
 
 # mask[mask < np.max(mask)/20] = 0
 # mask[mask > 0] = 1

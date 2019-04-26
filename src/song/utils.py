@@ -1,30 +1,50 @@
 from math import floor, log2
 import numpy as np
-import matplotlib.pyplot as plt
 from scipy import signal
 
 
 def time_coef(frame, hop_size, sr):
+    """
+    :param frame: the frame index in an STFT
+    :param hop_size: the hop size used in creating the STFT
+    :param sr: the sample rate of the input to the STFT
+    :return: the time in seconds that the frame is referring to
+    """
     return (frame*hop_size)/sr
 
 
 def freq_coef(ind, sr=44100, nfft=8192):
+    """
+    Returns the correct frequency coefficient of a point in a fourier transform
+    :param ind: the index in the fft
+    :param sr: the sample rate
+    :param nfft: the length of the fft
+    :return: the frequency coefficient, will be between 0 and 22050 (Nyquist frequency)
+    """
     return ind * (sr/nfft)
 
 
-def mag_to_db(mag):
-    # for i in range(len(mag)):
-    #     mag[i] = 20 * np.log10(mag[i])
-    return np.where(mag > 0, 20 * np.log10(mag), 0)
+# def mag_to_db(mag):
+#     # for i in range(len(mag)):
+#     #     mag[i] = 20 * np.log10(mag[i])
+#     return np.where(mag > 0, 20 * np.log10(mag), 0)
 
 
 def midi_to_pitch(note, tuning=440):
-    """Takes a midi number and returns the relative frequency. Has a tuning parameter with defaults to 440"""
+    """
+    Takes a midi number and returns the relative frequency. Has a tuning parameter with defaults to 440
+    :param note: the frequency of the note
+    :param tuning: the tuning of the note A4
+    :return:
+    """
     return (2 ** ((note - 69) / 12)) * tuning
 
 
 def note_pitch_midi(tuning=440):
-    """Creates a dictionary with has information on every note from C0 to B8 such as midi value and pitch value"""
+    """
+    :param tuning: the tuning frequency of A4
+    :return: a dictionary with has information on every note from C0 to B8 such as midi value and pitch value
+    """
     note_info = {}
     note_names = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
     note_names = note_names * 10
@@ -34,6 +54,12 @@ def note_pitch_midi(tuning=440):
 
 
 def log_compression(spect, y=1):
+    """
+    Returns a logarithmically compressed version of a spectrogram, allowing smaller energies to become more relevant
+    :param spect: a magnitude spectrogram
+    :param y: the higher the value of this variable the more relevant smaller energies will become
+    :return: a logarithmically compressed version of a spectrogram
+    """
     for i in range(len(spect[0])):
         spect[:, i] = np.log(spect[:, i] * y + 1)
     return spect
@@ -58,8 +84,17 @@ def log_freq_spec(spect):
     return new_full
 
 
-def freq_to_bucket(freq, cents=100, ref=8.66):
-    freq = freq_coef(freq)
+def freq_to_bucket(freq, cents=100, ref=8.66, nfft=8192, sr=44100):
+    """
+    Takes a frequency coefficient and a reference for the lowest bucket, default is C0, and returns the relative bucket
+    in a log frequency spectrum. The size of each bucket is set by the number of cents. Default is 100, which is a
+    semitone.
+    :param freq: frequency coefficient
+    :param cents: size of each bucket
+    :param ref: the reference frequency for the lowest bucket in the log freq spectrum
+    :return: the index of the correct bucket
+    """
+    freq = freq_coef(freq, sr=sr, nfft=nfft)
     return floor((1200/cents)*log2(freq/ref)+1.5)
 
 
@@ -80,116 +115,12 @@ def select_peaks(frame, threshold=np.mean, keep=False):
 
 def magphase(spect, mag_only=False):
     if mag_only:
-        return np.abs(spect), 0
+        return np.abs(spect), 1
     mag = np.abs(spect)
     phase = np.exp(1.j * np.angle(spect))
     return mag, phase
 
 
-def harmonic_summ(arr):
-    # TODO: This is not changing the output at all
-    # TODO: IMPORTANT
-    # TODO: Change to an inplace list mod
-    for i in range(len(arr)-28):
-        arr[i] += arr[i+12] + arr[i+19] + arr[i+24] + arr[i+28]
-    return arr
-
-
-def voicing(t, threshold=1):
-    """Takes a column of stft and a volume threshold and will return any notes that are present"""
-    if np.max(t) > 1000000:
-        return np.argmax(t)
-    else:
-        return -1
-
-
-def bin_offset(k, kval, kval2, N =8192, sr=44100, H=128):
-    first = N/H
-    second = np.angle(kval - kval2 - ((k*H)/N))/(np.pi*2)
-    return k + (first*second)*(sr/N)
-
-
-def phase_correct(spec, N=8192, H=128):
-    first = N / (np.pi*H)
-    for i in range(1, len(spec[0])-1):
-        curr = spec[:, i]
-        prev = spec[:, i-1].imag
-        icurr = curr.imag
-        principal = np.angle(icurr - prev - ((np.pi*H)/N)*curr)
-        spec[:, i] += (first * principal)
-        print("curr", curr)
-        print(curr + (first * principal), "\n")
-    return spec
-
-
-def harmsumm(frame):
-    for peak in range(len(frame)):
-        try:
-            frame[peak] += frame[peak + 12] + frame[peak + 19] + frame[peak + 24] + frame[peak + 28]
-        except:
-            pass
-    return frame
-
-
-def frame_to_time(frame, hop_size=256, sr=44100):
-    return (frame*hop_size)/sr
-
-
 def time_to_beats(time, bpm):
     beat = 60/bpm
     return time/beat
-
-
-def smooth(x, window_len=11, window='hanning'):
-    """smooth the data using a window with requested size.
-
-    This method is based on the convolution of a scaled window with the signal.
-    The signal is prepared by introducing reflected copies of the signal
-    (with the window size) in both ends so that transient parts are minimized
-    in the begining and end part of the output signal.
-
-    input:
-        x: the input signal
-        window_len: the dimension of the smoothing window; should be an odd integer
-        window: the type of window from 'flat', 'hanning', 'hamming', 'bartlett', 'blackman'
-            flat window will produce a moving average smoothing.
-
-    output:
-        the smoothed signal
-
-    example:
-
-    t=linspace(-2,2,0.1)
-    x=sin(t)+randn(len(t))*0.1
-    y=smooth(x)
-
-    see also:
-
-    numpy.hanning, numpy.hamming, numpy.bartlett, numpy.blackman, numpy.convolve
-    scipy.signal.lfilter
-
-    TODO: the window parameter could be the window itself if an array instead of a string
-    NOTE: length(output) != length(input), to correct this: return y[(window_len/2-1):-(window_len/2)] instead of just y.
-    """
-
-    if x.ndim != 1:
-        raise ValueError("smooth only accepts 1 dimension arrays.")
-
-    if x.size < window_len:
-        raise ValueError("Input vector needs to be bigger than window size.")
-
-    if window_len < 3:
-        return x
-
-    if window not in ['flat', 'hanning', 'hamming', 'bartlett', 'blackman']:
-        raise ValueError("Window is on of 'flat', 'hanning', 'hamming', 'bartlett', 'blackman'")
-
-    s = np.r_[x[window_len - 1:0:-1], x, x[-2:-window_len - 1:-1]]
-    # print(len(s))
-    if window == 'flat':  # moving average
-        w = np.ones(window_len, 'd')
-    else:
-        w = eval('np.' + window + '(window_len)')
-
-    y = np.convolve(w / w.sum(), s, mode='valid')
-    return y[(window_len//2-1):-(window_len//2)]
