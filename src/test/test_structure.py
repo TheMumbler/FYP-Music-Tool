@@ -3,7 +3,8 @@ import numpy as np
 
 sr, song = read.read("test/testfiles/structure.wav")
 song = read.startend(song)
-ret = structure.find_segments(song)
+bpm = 100
+ret = structure.find_segments(song, bpm)
 
 
 def test_split_pos():

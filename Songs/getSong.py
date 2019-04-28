@@ -8,7 +8,7 @@ from werkzeug import secure_filename
 
 # yt = YouTube("https://www.youtube.com/watch?v=mTwoMGCtPT8")
 # yt = YouTube("https://www.youtube.com/watch?v=ziAqB9nb_To")
-yt = YouTube("https://www.youtube.com/watch?v=kjlu9RRHcbE")
+yt = YouTube("https://www.youtube.com/watch?v=NSkSzpk4pSk")
 
 # yt = YouTube("https://www.youtube.com/watch?v=3X9LvC9WkkQ")
 
@@ -27,7 +27,7 @@ print(fname)
 print(fname, "THIS IS THE FILE")
 t[0].download(filename=fname)
 # TODO: CONVERT SONG
-subprocess.call("ffmpeg -i \"" + fname + ".mp4\" -ac 1 -f wav \"" + "sand.wav\"")
+subprocess.call("ffmpeg -i \"" + fname + ".mp4\" -ac 1 -f wav \"" + "drumbeat1.wav\"")
 # os.remove(fname + ".mp4")
 # ffmpeg -i my_video.mp4 -c copy -map 0:a output_audio.mp4
 # TODO: REMOVE OLD SONG
