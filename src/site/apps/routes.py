@@ -1,5 +1,5 @@
 from . import app
-from flask import render_template, url_for, request, redirect, flash, send_from_directory, current_app
+from flask import render_template, url_for, request, redirect, flash, send_from_directory, session, current_app
 from flask_login import current_user, login_user, logout_user, login_required
 from .models import User
 from .forms import LoginForm, RegistrationForm, AddFile, YouTubeLink
@@ -9,7 +9,8 @@ from . import db
 import io
 import os
 from src import piano
-
+from librosa.beat import tempo
+from src.song import structure
 from src.song import read
 
 
@@ -75,11 +76,13 @@ def tool():
             f = request.files['file']
             name = secure_filename(f.filename)
             f.save(os.path.join(path, name))
+            session["segmented"] = form.segmented.data
             print('file uploaded successfully for user {}'.format(user))
             return redirect(url_for('results', user=user))
 
         elif form2.validate_on_submit():
             link = request.form.get('link')
+            session["segmented"] = form2.segmented.data
             read.get_youtube(link, path)
             return redirect(url_for('results', user=user))
 
@@ -90,7 +93,10 @@ def tool():
 def results(user):
     userpath = os.path.join(app.config['UPLOAD_FOLDER'], user)
     currfile = os.listdir(userpath)[0]
+    fileloc = os.path.join(userpath, currfile)
+    piano.piano_ver1(fileloc, "pooo", "wew", sections=session["segmented"])
     # sr, song = read(os.path.join(location))
+    session.pop("segmented")
     return render_template("results.html", wavpath=currfile)
 
 
@@ -111,3 +117,14 @@ def downloadMidi(user, filename):
 @app.route('/user/<username>')
 def user(user):
     return render_template("user.html", user=user)
+
+
+@app.errorhandler(404)
+def not_found_error(error):
+    return render_template('404.html'), 404
+
+
+@app.errorhandler(500)
+def internal_error(error):
+    db.session.rollback()
+    return render_template('500.html'), 500
