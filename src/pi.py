@@ -36,7 +36,7 @@ peaks, x = spectral.salience(x)
 # x = median_filter(abs(np.flip(x)), size=(1, 12))
 # x = np.flip(x)
 # x = median_filter(abs(np.flip(x)), size=(1, 12))
-x = spectral.refined_log_freq_spec(x)
+x = spectral.refined.log_freq(x)
 spectral.display(x)
 mask = median_filter(abs(x), size=(1, 64))
 mask[mask < np.max(mask)/20] = 0

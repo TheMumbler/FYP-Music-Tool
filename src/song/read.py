@@ -5,7 +5,6 @@ from pytube import YouTube
 
 
 def read(file, delete=True):
-    # TODO: Use ffmpeg to convert song to mono and Wav format
     file = os.path.abspath(file)
     if file.endswith(".wav"):
         sr, song = scipy.io.wavfile.read(file)

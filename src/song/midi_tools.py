@@ -67,5 +67,6 @@ def output_midi(name, notes, bpm, sr, hopsize=256, directory="testy"):
 
     print("track complete")
     os.makedirs(os.path.dirname(directory + "/" + name + ".mid"), exist_ok=True)
-    with open(directory + "/" + name+".mid", "wb") as output_file:
+    file = directory + "/" + name + ".mid"
+    with open(file, "wb") as output_file:
         MyMIDI.writeFile(output_file)

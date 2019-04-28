@@ -8,29 +8,29 @@ from scipy.ndimage.filters import uniform_filter1d
 import math
 
 
-def my_stft(song, w="hann", win_len=2048, hop_size=128):
-    # TODO: Too inefficient
-    w = signal.get_window(w, win_len)
-    short = np.zeros(shape=(4097, (len(song) - win_len) // hop_size), dtype=complex)
-    for i in range(0, len(song) - win_len, hop_size):
-        windowed = song[i:i + win_len] * w
-        this = np.fft.rfft(windowed, n=8192)
-        short[:, (i // hop_size) - 1] = this
-    return short
+# def my_stft(song, w="hann", win_len=2048, hop_size=128):
+#     # TODO: Too inefficient
+#     w = signal.get_window(w, win_len)
+#     short = np.zeros(shape=(4097, (len(song) - win_len) // hop_size), dtype=complex)
+#     for i in range(0, len(song) - win_len, hop_size):
+#         windowed = song[i:i + win_len] * w
+#         this = np.fft.rfft(windowed, n=8192)
+#         short[:, (i // hop_size) - 1] = this
+#     return short
 
 
-def refined_log_freq_spec(spect, bins=128, nfft=8192):
-    # TODO: This function breaks if freq_to_buckets cents is set to anything small as it tries to get negative index
-    song_length = len(spect[0])
-    new_full = np.zeros(shape=(bins, song_length))
-    for index in range(1, len(spect)):
-        if freq_to_bucket(index) >= 128:
-            break
-        new_full[freq_to_bucket(index)] += spect[index]
-    return new_full
+# def refined_log_freq_spec(spect, bins=128, nfft=8192):
+#     # TODO: This function breaks if freq_to_buckets cents is set to anything small as it tries to get negative index
+#     song_length = len(spect[0])
+#     new_full = np.zeros(shape=(bins, song_length))
+#     for index in range(1, len(spect)):
+#         if freq_to_bucket(index) >= 128:
+#             break
+#         new_full[freq_to_bucket(index)] += spect[index]
+#     return new_full
 
 
-def log_spec(spect, bins=128):
+def log_spec(spect, bins=128, nfft=8192, sr=44100):
     # TODO: help, wont use this for now but will come back to it
     song_length = len(spect[0])
     new_full = np.zeros(shape=(bins, song_length))
@@ -43,9 +43,9 @@ def log_spec(spect, bins=128):
         for peak in peaks:
             # offset = np.angle(spect[peak, frame] - spect[peak, frame-1] - (((2 * np.pi * 256) / 8192) * frame)) * \
             #          (8192 / (2 * np.pi * 256))
-            if freq_to_bucket(peak) >= 128:
+            if freq_to_bucket(peak, nfft=nfft, sr=sr) >= 128:
                 break
-            new_full[freq_to_bucket(peak), frame] += abs(spect[peak, frame])
+            new_full[freq_to_bucket(peak, nfft=nfft, sr=sr), frame] += abs(spect[peak, frame])
     return new_full
 
 
@@ -70,14 +70,14 @@ def salience(spec, logged=True):
     return spec
 
 
-def temp_function(spec):
-    spec = refined_log_freq_spec(spec)
-    spec[spec > np.max(spec)/80] = 0
-    spec = maximum_filter(abs(spec), size=(1, 4))
-    mask = median_filter(abs(spec), size=(1, 32))
-    mask[mask > 0] = 1
-    spec = spec * mask
-    return spec
+# def temp_function(spec):
+#     spec = refined_log_freq_spec(spec)
+#     spec[spec > np.max(spec)/80] = 0
+#     spec = maximum_filter(abs(spec), size=(1, 4))
+#     mask = median_filter(abs(spec), size=(1, 32))
+#     mask[mask > 0] = 1
+#     spec = spec * mask
+#     return spec
 
 
 def harmonic_summation(frame, peaks, weights, logged=True):

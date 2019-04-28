@@ -31,11 +31,15 @@ class RegistrationForm(FlaskForm):
 
 class AddFile(FlaskForm):
     file = FileField(validators=[DataRequired()])
+    segmented = BooleanField('Segmented?')
     submit = SubmitField('Analyse')
 
 
 class YouTubeLink(FlaskForm):
     youtube = r"^(https?://)?(www.)?(youtube.com|youtu.?be)/.+$"
+    valid_vid = r"((?:v=|/)([0-9A-Za-z_-]{11}).*)"
     link = StringField(validators=[DataRequired(),
-                                   Regexp(regex=youtube, message="Must be a valid youtube link")])
+                                   Regexp(regex=youtube, message="Must be a youtube link")])
+                                   # Regexp(regex=valid_vid, message="Must be a valid youtube video")])
+    segmented = BooleanField('Segmented?')
     submit = SubmitField('Analyse')

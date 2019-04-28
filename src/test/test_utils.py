@@ -1,4 +1,5 @@
 from src.song import utils
+import numpy as np
 
 
 def test_time_coef():
@@ -21,39 +22,19 @@ def test_freq_to_bucket():
     assert utils.freq_to_bucket(81, 100, 8.66, sr=22050, nfft=4096) == 69
 
 
-def test_bin_offset():
-    pass
-
-
-def test_bucket_size():
-    pass
-
-
-def test_frame_to_time():
-    pass
-
-
 def test_log_compression():
     pass
 
 
-def test_log_freq_spec():
-    pass
-
-
-def test_mag_to_db():
-    pass
-
-
 def test_magphase():
-    pass
-
-
-def test_midi_to_pitch():
-    pass
+    inp = np.array([[1.+1.j, 2.+2.j, 3.+3.j],
+                    [4.+4.j, 5.+5.j, 6.+6.j],
+                    [7.+7.j, 8.+8.j, 9.+9.j]])
+    mag, phase = utils.magphase(inp)
+    assert np.allclose(mag, np.abs(inp))
 
 
 def test_time_to_beats():
-    pass
+    assert utils.time_to_beats(.5, 120) == 1
 
 

@@ -16,6 +16,7 @@ def time_coef(frame, hop_size, sr):
 def freq_coef(ind, sr=44100, nfft=8192):
     """
     Returns the correct frequency coefficient of a point in a fourier transform
+
     :param ind: the index in the fft
     :param sr: the sample rate
     :param nfft: the length of the fft
@@ -65,23 +66,23 @@ def log_compression(spect, y=1):
     return spect
 
 
-def bucket_size():
-    # TODO: Maybe try remove this
-    for i in np.arange(11.5, 108.5, 1):  # Maybe change 11.5 to zero?
-        yield int(i+.5), midi_to_pitch(i), midi_to_pitch(i+1)
-
-
-def log_freq_spec(spect):
-    # TODO: Reduce complexity in this here pal
-    song_length = len(spect[0])
-    new_full = np.empty(shape=(109, song_length))
-    for new_i, left, right in bucket_size():
-        new = np.zeros(song_length)
-        for index in range(len(spect)):
-            if left < index < right:
-                new = new + spect[index]
-        new_full[new_i] = new
-    return new_full
+# def bucket_size():
+#     # TODO: Maybe try remove this
+#     for i in np.arange(11.5, 108.5, 1):  # Maybe change 11.5 to zero?
+#         yield int(i+.5), midi_to_pitch(i), midi_to_pitch(i+1)
+#
+#
+# def log_freq_spec(spect):
+#     # TODO: Reduce complexity in this here pal
+#     song_length = len(spect[0])
+#     new_full = np.empty(shape=(109, song_length))
+#     for new_i, left, right in bucket_size():
+#         new = np.zeros(song_length)
+#         for index in range(len(spect)):
+#             if left < index < right:
+#                 new = new + spect[index]
+#         new_full[new_i] = new
+#     return new_full
 
 
 def freq_to_bucket(freq, cents=100, ref=8.66, nfft=8192, sr=44100):
@@ -124,3 +125,15 @@ def magphase(spect, mag_only=False):
 def time_to_beats(time, bpm):
     beat = 60/bpm
     return time/beat
+
+
+def frame_to_beats(frame, hop_size, bpm, sr):
+    time = time_coef(frame, hop_size, sr)
+    beat = 60/bpm
+    return time/beat
+
+
+def beats_to_frames(beat, bpm, hop_size, sr):
+    samples = 60/bpm * sr
+    frames = samples / hop_size
+    return floor(frames * beat)

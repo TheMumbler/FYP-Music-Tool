@@ -38,5 +38,5 @@ def test_startend():
 def test_startend_np():
     arr = np.array([0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0])
     after = read.startend(arr)
-    assert after.all() == np.array([1, 1, 1, 1, 1]).all()
+    assert np.allclose(after, np.array([1, 1, 1, 1, 1]))
     assert type(after) is np.ndarray
