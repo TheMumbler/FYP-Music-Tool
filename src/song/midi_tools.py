@@ -4,6 +4,16 @@ from midiutil import MIDIFile
 import os
 
 
+drumMidi = {"Ride" : 51,
+            "Kick" : 36,
+            "Snare" : 38,
+            "Clap" : 39,
+            "Tom" : 41,
+            "OpenHat" : 46,
+            "ClosedHat" : 42,
+            "Crash" : 49}
+
+
 def split_notes(line, gap_allow=15):
     x = (np.diff(line))
     x[x < gap_allow] = 0
@@ -70,3 +80,25 @@ def output_midi(name, notes, bpm, sr, hopsize=256, directory="testy"):
     file = directory + "/" + name + ".mid"
     with open(file, "wb") as output_file:
         MyMIDI.writeFile(output_file)
+
+
+def out_midi_drums(onsets, drums, bpm, sr, hopsize=512):
+    track = 0
+    channel = 0
+    time = 0  # In beats
+    tempo = bpm  # In BPM
+    volume = 100  # 0-127, as per the MIDI standard
+    MyMIDI = MIDIFile(1)
+    MyMIDI.addTempo(track, time, tempo)
+    for onset, drumList in zip(onsets, drums):
+        for drum in drumList:
+            start = utils.time_to_beats(utils.time_coef(onset-onsets[0], hop_size=hopsize, sr=sr), bpm)
+            pitch = drumMidi[drum]
+            duration = 1
+            MyMIDI.addNote(track, channel, pitch, start, duration, volume)
+    with open("drums.mid", "wb") as output_file:
+        MyMIDI.writeFile(output_file)
+
+
+# def quantize(n, beat=16):
+#
