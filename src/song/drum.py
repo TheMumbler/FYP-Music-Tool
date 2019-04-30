@@ -7,6 +7,17 @@ from keras import models
 from keras import layers
 import librosa
 import os
+from song import midi_tools
+
+
+c = {0: "Clap",
+     1: "ClosedHat",
+     2: "Crash",
+     3: "Kick",
+     4: "OpenHat",
+     5: "Ride",
+     6: "Snare",
+     7: "Tom"}
 
 
 def extract_feats(y, sr):
@@ -42,3 +53,37 @@ def scale_features(feats):
     return trans
 
 
+def segment_song(song, sr, bpm=None):
+    scaler = joblib.load(os.path.abspath("scaler.save"))
+    model = load_model('drum_model.h5')
+
+    onset_env = librosa.onset.onset_strength(y)
+    onset_frames = librosa.onset.onset_detect(y, onset_envelope=onset_env)
+    onset_samples = onset_frames * 512
+
+    segments = []
+    for ons in onset_samples[:-1]:
+        segment = song[ons - 3000:ons + 3000]
+        #     windowed = segment * window
+        segments.append(segment)
+
+    for i in range(len(segments)):
+        segments[i] = extract_feats(segments[i], sr)
+    trans = scaler.transform(np.array(segments))
+
+    predictions = (model.predict_proba(trans))
+
+    classes = []
+    for prediction in predictions:
+        #     print(predict)
+        #     highs =(np.argsort(prediction[prediction > .0]))
+        #     highest = (c[np.argmax(prediction)])
+        #     classes.append([c[x] for x in highs] )
+        highest = np.argmax(prediction)
+        classes.append(c[highest])
+    newclasses = [[x] for x in classes]
+
+    if not bpm:
+        bpm = librosa.beat.tempo(y)[0]
+
+    midi_tools.out_midi_drums(onset_frames, newclasses, bpm, sr)

@@ -15,10 +15,10 @@ print("done importing")
 
 
 print("reading file")
-# sr, song = read.read('../Songs/fur_elise.wav')
+sr, song = read.read('../Songs/fur_elise.wav')
 # sr, song = read.read('../Songs/river_flows_in_you.wav')
 # sr, song = read.read('../Songs/deadmau5.wav')
-sr, song = read.read('../Songs/crab.wav')
+# sr, song = read.read('../Songs/crab.wav')
 song = read.startend(song)
 # sr, song = read.read('../Songs/billie.wav')
 # sr, song = read.read('../Songs/hungarian.wav')
@@ -31,7 +31,7 @@ bpm = tempo(song, sr=sr) # [0]
 print("found bpm")
 weights = [1.0, 0.5, 0.33, 0.25]
 # song = song[:sr*5]
-song = song[sr*43:sr*180]
+# song = song[sr*43:sr*180]
 print(sr)
 # onsets = onset_detect(song, hop_length=256, units='frames')
 # plt.plot(song)
@@ -57,7 +57,7 @@ def octave_weak(frame):
 
 _, _, x = signal.stft(song, nperseg=2048, nfft=8192, noverlap=1536)  # , noverlap=1792)  # 1792/1920
 
-x, _ = decomp.hpss(x, 2, ksize=16)
+# x, _ = decomp.hpss(x, 2, ksize=16)
 x = abs(x)
 # x, _ = utils.magphase(x, mag_only=True)
 
