@@ -1,11 +1,12 @@
 from . import app
-from flask import render_template, url_for, request, redirect, flash, send_from_directory, session, current_app
+from flask import render_template, url_for, request, redirect, flash, send_from_directory, session, stream_with_context, request, Response
 from flask_login import current_user, login_user, logout_user, login_required
 from .models import User
 from .forms import LoginForm, RegistrationForm, AddFile, YouTubeLink
 from werkzeug import secure_filename
 from werkzeug.urls import url_parse
 from . import db
+import time
 import io
 import os
 from src import piano
@@ -128,3 +129,14 @@ def not_found_error(error):
 def internal_error(error):
     db.session.rollback()
     return render_template('500.html'), 500
+
+
+@app.route('/stream')
+def streamed_response():
+    def generate():
+        yield 'Hello '
+        time.sleep(1)
+        yield "ujj"
+        time.sleep(1)
+        yield '!'
+    return Response(stream_with_context(generate()))
