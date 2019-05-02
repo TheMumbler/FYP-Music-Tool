@@ -5,6 +5,7 @@ from scipy.spatial.distance import cdist
 from . import spectral
 import numpy as np
 import matplotlib.pyplot as plt
+import os
 
 
 def split_pos(arr):
@@ -50,8 +51,16 @@ def get_energy(lag):
     return energy
 
 
-def find_segments(song, bpm):
+def find_segments(song, bpm, destination=None):
+
+    if not destination:
+        destination = os.path.abspath(os.path.dirname(__file__))
     dist = chroma_structure(song)
+    pic1 = os.path.join(destination, "before")
+    plt.pcolormesh(dist, cmap=plt.cm.get_cmap("Greys"))
+    plt.savefig(pic1, quality=95)
+    plt.close()
+
     footie = np.zeros(shape=(100, 100))
     np.fill_diagonal(footie, 1)
 
@@ -68,9 +77,14 @@ def find_segments(song, bpm):
     starts, _ = signal.find_peaks(p, distance=gaps)  # , prominence=0.04)
     srpeaks = starts * 4096
     srpeaks = list(srpeaks)
-    plt.pcolormesh(dist)
+
+    pic2 = os.path.join(destination, "nolines")
+    plt.pcolormesh(dist, cmap=plt.cm.get_cmap("Greys"))
+
+    plt.savefig(pic2, quality=95)
+    pic3 = os.path.join(destination, "lines")
     for peak in starts:
-        plt.axhline(y=peak)
         plt.axvline(x=peak)
-    plt.savefig("ummmmm", quality=95)
+    plt.savefig(pic3, quality=95)
+
     return srpeaks

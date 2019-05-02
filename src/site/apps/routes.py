@@ -10,6 +10,7 @@ import time
 import io
 import os
 from src import piano
+from src.song import beat
 from librosa.beat import tempo
 from src.song import structure
 from src.song import read
@@ -90,12 +91,28 @@ def tool():
     return render_template("tool.html", user=current_user.username, fileform=form, youtubeform=form2)
 
 
+@app.route('/tool', methods=['GET', 'POST'])
+@login_required
+def drumtool():
+    pass
+
+
 @app.route('/<user>/results', methods=['GET', 'POST'])
+@login_required
 def results(user):
     userpath = os.path.join(app.config['UPLOAD_FOLDER'], user)
     currfile = os.listdir(userpath)[0]
     fileloc = os.path.join(userpath, currfile)
-    piano.piano_ver1(fileloc, "pooo", "wew", sections=session["segmented"])
+    uploads = os.path.join(app.config['DOWNLOAD_FOLDER'], user)
+    # piano.piano_ver1(fileloc, "pooo", "wew", sections=session["segmented"])
+    session['bpm'] = 123213
+    def generate():
+        session['bpm'] = beat.get_bpm(fileloc)
+        yield render_template("results.html", wavpath=currfile)
+        time.sleep(1)
+        yield "ujj"
+        time.sleep(1)
+        yield '!'
     # sr, song = read(os.path.join(location))
     session.pop("segmented")
     return render_template("results.html", wavpath=currfile)

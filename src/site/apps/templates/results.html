@@ -8,6 +8,12 @@
 
     <div id="waveform"></div>
 
+    {% if session['bpm'] %}
+
+        {{ session['bpm'] }}
+
+    {% endif %}
+
     <a href="{{ url_for('tool') }}">
        <input type="button" value="New Search" />
     </a>

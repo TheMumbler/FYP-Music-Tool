@@ -79,7 +79,7 @@ def piano_ver1(song, name, user, bpm=None, hp=False, sections=False):
         log = median_filter(abs(log), size=(1, 8))
 
         notes = midi_tools.get_notes(log)
-        midi_tools.output_midi("testo"+str(i), notes, bpm, sr, hopsize=512)
+        midi_tools.output_midi("testo"+str(i), notes, bpm, sr, hopsize=512, directory="Testy")
 
 
         i += 1

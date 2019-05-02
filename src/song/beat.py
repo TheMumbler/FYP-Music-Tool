@@ -2,7 +2,18 @@ import numpy as np
 from .utils import log_compression
 # import read
 from scipy import signal
+from .read import read, startend
 import matplotlib.pyplot as plt
+from librosa.beat import tempo
+
+
+def get_bpm(song):
+    sr, song = read(song)
+    song = startend(song)
+    song = song * 1.0
+    bpm = tempo(song, sr=sr)[0]
+    return bpm
+
 
 
 def half_w_rect(song):

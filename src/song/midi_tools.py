@@ -76,20 +76,22 @@ def output_midi(name, notes, bpm, sr, hopsize=256, directory="testy"):
             MyMIDI.addNote(track, channel, pitch, start, duration, volume)
 
     print("track complete")
-    os.makedirs(os.path.dirname(directory + "/" + name + ".mid"), exist_ok=True)
-    file = directory + "/" + name + ".mid"
+    output_path = directory
+    file = os.path.join(output_path, name + ".mid")
+    os.makedirs(os.path.dirname(file), exist_ok=True)
     with open(file, "wb") as output_file:
         MyMIDI.writeFile(output_file)
 
 
 def out_midi_drums(onsets, drums, bpm, sr, hopsize=512):
     track = 0
-    channel = 0
+    channel = 9
     time = 0  # In beats
     tempo = bpm  # In BPM
     volume = 100  # 0-127, as per the MIDI standard
     MyMIDI = MIDIFile(1)
     MyMIDI.addTempo(track, time, tempo)
+    # MyMIDI.addProgramChange(track, channel, time, 113)
     for onset, drumList in zip(onsets, drums):
         for drum in drumList:
             start = utils.time_to_beats(utils.time_coef(onset-onsets[0], hop_size=hopsize, sr=sr), bpm)
