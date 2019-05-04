@@ -42,10 +42,27 @@ this library to play around with the output and see if I am going down the right
 
 ![onset](https://gitlab.computing.dcu.ie/ferryp2/2019-ca400-ferryp2/raw/master/docs/blog/images/onset.png)
 
+I have been using Librosa to find the onsets and then I would fourier transform a section of the audio signal at that 
+point and look for peaks using a function in SciPy called find_peaks. I noticed that there was a lot more spikes than 
+I was expecting and it took me a while to realised why. This is when I learned about windowing. Window in signal 
+processing are used a section of a wave you are trying to analyse. The aim of a window is to have the segment of audio 
+in this case begin around or at zero so to focus on the content in the middle. The most popular type of window seems to
+be the Hann window. A window can be applied to a signal by element-wise multiplication.
+
+Solarized dark             |  Solarized Ocean          | After windowing           |
+:-------------------------:|:-------------------------:|:-------------------------:|
+![wave_no_window](https://gitlab.computing.dcu.ie/ferryp2/2019-ca400-ferryp2/raw/master/docs/blog/images/nowindow.png)  |  ![hann_window](https://gitlab.computing.dcu.ie/ferryp2/2019-ca400-ferryp2/raw/master/docs/blog/images/window.png)  | ![wave_with_window](https://gitlab.computing.dcu.ie/ferryp2/2019-ca400-ferryp2/raw/master/docs/blog/images/applied_window.png)|
 
 Onset detection and initial melody tracking. Librosa
 
 ## New Findings
+This week I came across a new book 'Fundamentals of Music Processing: Audio, Analysis, Algorithms, Applications' by 
+Meinard Müller. It was mentioned in the ISMIR edcuational resources. It is an amalgamation of many papers on different
+aspects of music information retrieval and also begins by going over fourier transforms and spectrogram representations.
+There is also a chapter called "Musically Informed Audio Decomposition" with a section on melody extraction. After reading 
+this I realised that using onset detection and then find spikes in the fourier transform of 
+
+
 Muellers book and
 
 ## Frequency Binning
