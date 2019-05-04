@@ -50,12 +50,12 @@ processing are used a section of a wave you are trying to analyse. The aim of a 
 in this case begin around or at zero so to focus on the content in the middle. The most popular type of window seems to
 be the Hann window. A window can be applied to a signal by element-wise multiplication.
 
-Segment of Audio             |  Hann Window          | Segment after windowing           |
+Segment of audio wave      |  Hann Window              | Segment after windowing   |
 :-------------------------:|:-------------------------:|:-------------------------:|
 ![wave_no_window](https://gitlab.computing.dcu.ie/ferryp2/2019-ca400-ferryp2/raw/master/docs/blog/images/nowindow.png)  |  ![hann_window](https://gitlab.computing.dcu.ie/ferryp2/2019-ca400-ferryp2/raw/master/docs/blog/images/window.png)  | ![wave_with_window](https://gitlab.computing.dcu.ie/ferryp2/2019-ca400-ferryp2/raw/master/docs/blog/images/applied_window.png)|
 
 After applying this technique I noticed it was much easier to pick out the correct peaks from the output of the fourier 
-transforms.
+transforms. 
 
 ## New Findings
 This week I came across a new book 'Fundamentals of Music Processing: Audio, Analysis, Algorithms, Applications' by 
@@ -66,9 +66,32 @@ this I realised that my initial technique of using onset detection and finding t
 effective. As onset detection is not perfect building on top of it by just picking peaks would end up being very inaccurate.
 
 
-### Short time fourier transforms and frequency binning
+### Short time fourier transforms 
 Müller's book suggests that a better approach is to create a spectrogram representation of the audio I am planning to 
-transcribe. I decided to use SciPy's short time fourier transform function for this. 
+transcribe. I decided to use SciPy's short time fourier transform function for this and using matplotlibs pcolormesh 
+function to display the spectrogram. It can be hard to see some most of the energy in a spectrogram which is why I used 
+a logged compression function to make the lower energies easier to see. The following images are the first five seconds 
+of Fur Elise by Beethoven.
+
+
+Without Log compression    |  With Log Compression     |
+:-------------------------:|:-------------------------:|
+![spectrogram w/o logging](https://gitlab.computing.dcu.ie/ferryp2/2019-ca400-ferryp2/raw/master/docs/blog/images/spec_no_log.png)  |  ![spectrogram with logging](https://gitlab.computing.dcu.ie/ferryp2/2019-ca400-ferryp2/raw/master/docs/blog/images/spec_log.png)  |
+
+As you can see it is much clearly after applying the log compression function. You also notice that most of the energy 
+is on the bottom of the spectrogram, this is because many notes the frequency of many musical notes are quite low. The 
+distance between notes from lower to higher logarithmically increases and doubles every octave (12 semitones). For 
+examples A<sub>4</sub> is usually tuned to a frequency of 440 making A<sub>5</sub> 880. This clumps alot of the information
+together which is why I tried frequency binning.
+
+### Frequency Binning
+The spectrogram above has 4096 bins as I used an FFT length of 8192 when creating it.
+
+```math
+a^2+b^2=c^2
+\floor{\frac{x/2}}
+```
+
 ### Monophonic pitch tracking
 
 ## Salience
