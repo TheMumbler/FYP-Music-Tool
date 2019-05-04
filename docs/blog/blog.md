@@ -40,9 +40,7 @@ planning on implementing this myself but as I am still trying to understand how 
 called Librosa. Librosa has a function for finding the onsets of an input by using this technique. I have been using 
 this library to play around with the output and see if I am going down the right path with this plan.
 
-<p align="center"> 
-<img src="https://gitlab.computing.dcu.ie/ferryp2/2019-ca400-ferryp2/raw/master/docs/blog/images/onset.png" alt="onset">
-</p>
+
 ![onset](https://gitlab.computing.dcu.ie/ferryp2/2019-ca400-ferryp2/raw/master/docs/blog/images/onset.png)
 
 I have been using Librosa to find the onsets and then I would fourier transform a section of the audio signal at that 
