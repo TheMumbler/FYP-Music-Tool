@@ -97,34 +97,29 @@ As I plan to output as a midi file to decided to transform my current spectrogra
 only 128 frequency bins. Each of these bins represents a semitone or midi note. To do this I took the frequency coefficient
 of each current bin and converted it over using the following function which finds it's relative midi note.
 
-```python
-def freq_to_bucket(freq, cents=100, reference=8.66, nfft=8192, sr=44100):
-    freq = freq_coef(freq, sr=sr, nfft=nfft)
-    return math.floor((1200/cents)*math.log2(freq/reference)+1.5)
-```
-
-
-This math is inline $`a^2+b^2=c^2`$.
-
-This is on a separate line
 ```math
-a^2+b^2=c^2
-\lfloor{12\cdot log_2(\frac{w}{440}}) + 69.5 \rfloor
+Bin(w) = \lfloor{12\cdot log_2(\frac{w}{440}}) + 69.5 \rfloor
 ```
+
 
 
 ### Monophonic pitch tracking
 
 ## Salience
-## F0 Tracking using salience
+### F0 Tracking using salience
 
 ### Problems with phase vocoder 
 
 ## Setting up flask
+### Logins
+### Bootstrap
+### Adding tool
 
 ## Segmentation 
 
 ## Teaching Drums
+### Collecting Data
+### Training Model
 
 ## Testing
 
