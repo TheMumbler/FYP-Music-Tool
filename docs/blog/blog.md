@@ -85,12 +85,32 @@ examples A<sub>4</sub> is usually tuned to a frequency of 440 making A<sub>5</su
 together which is why I tried frequency binning.
 
 ### Frequency Binning
-The spectrogram above has 4096 bins as I used an FFT length of 8192 when creating it.
+The spectrogram above has 4096 bins as I used an FFT length of 8192 when creating it. These bins correspond to different
+frequencies from 0hz to the 22khz (Nyquist Frequency). So what I did was created a function for getting the real frequency
+coefficient of a bin and then. 
 
+```python
+def freq_coef(index, sr, nfft):
+    return index * (sr/nfft)
+```
+As I plan to output as a midi file to decided to transform my current spectrogram into a variation of a spectrogram with
+only 128 frequency bins. Each of these bins represents a semitone or midi note. To do this I took the frequency coefficient
+of each current bin and converted it over using the following function which finds it's relative midi note.
+
+```python
+def freq_to_bucket(freq, cents=100, reference=8.66, nfft=8192, sr=44100):
+    freq = freq_coef(freq, sr=sr, nfft=nfft)
+    return math.floor((1200/cents)*math.log2(freq/reference)+1.5)
+```
+
+
+This math is inline $`a^2+b^2=c^2`$.
+
+This is on a separate line
 ```math
 a^2+b^2=c^2
-\floor{\frac{x/2}}
 ```
+
 
 ### Monophonic pitch tracking
 
