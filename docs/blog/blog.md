@@ -104,6 +104,14 @@ Bin(w) = \lfloor{12\cdot log_2(\frac{w}{440}}) + 69.5 \rfloor
 
 
 ### Monophonic pitch tracking
+I tried binning all of the frequencies and then getting the highest value in each frame to find the most prevalent note.
+This managed to get some of the correct notes but because I was only looking for the max it only finds one even if there 
+are no present.  
+
+Single Highest Notes| 
+:-------------------------:|
+![monophonic notes](https://gitlab.computing.dcu.ie/ferryp2/2019-ca400-ferryp2/raw/master/docs/blog/images/monophonic.png)  |
+
 
 ## Salience
 ### F0 Tracking using salience
