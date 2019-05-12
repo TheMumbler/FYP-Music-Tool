@@ -35,7 +35,7 @@ from .song.spectral import octave_weak, non_zero_average_std
 
 #
 
-def piano_ver1(song, name, user, bpm=None, sections=False, **kwargs):
+def piano(song, name, user, bpm=None, sections=False, **kwargs):
     # current peak pick for log_spec
     # avg = uniform_filter1d(abs(spect[:, frame]), 100)
     # peaks, _ = signal.find_peaks(abs(spect[:, frame]), height=avg, prominence=5)

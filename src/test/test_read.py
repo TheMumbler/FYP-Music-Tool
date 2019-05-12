@@ -40,3 +40,7 @@ def test_startend_np():
     after = read.startend(arr)
     assert np.allclose(after, np.array([1, 1, 1, 1, 1]))
     assert type(after) is np.ndarray
+
+
+def test_get_youtube():
+    assert read.get_youtube("https://www.youtube.com/watch?v=kjlu9RRHcbE")

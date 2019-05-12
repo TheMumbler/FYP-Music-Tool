@@ -8,6 +8,7 @@ import numpy as np
 import librosa
 import os
 from src.song import midi_tools
+from src.song import read
 
 
 c = {0: "Clap",
@@ -53,12 +54,14 @@ def scale_features(feats):
     return trans
 
 
-def drum_tool(song, sr, bpm=None, **kwargs):
+def drum_tool(song, name, bpm=None, **kwargs):
+    sr, song = read.read(song)
+    song = song * 1.0
     scaler = joblib.load(os.path.abspath("scaler.save"))
     model = load_model('drum_model.h5')
 
-    onset_env = librosa.onset.onset_strength(y)
-    onset_frames = librosa.onset.onset_detect(y, onset_envelope=onset_env)
+    onset_env = librosa.onset.onset_strength(song)
+    onset_frames = librosa.onset.onset_detect(song, onset_envelope=onset_env)
     onset_samples = onset_frames * 512
 
     segments = []
@@ -84,6 +87,6 @@ def drum_tool(song, sr, bpm=None, **kwargs):
     newclasses = [[x] for x in classes]
 
     if not bpm:
-        bpm = librosa.beat.tempo(y)[0]
+        bpm = librosa.beat.tempo(song)[0]
 
-    midi_tools.out_midi_drums(onset_frames, newclasses, bpm, sr)
+    midi_tools.out_midi_drums(name, onset_frames, newclasses, bpm, sr)

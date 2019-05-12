@@ -44,10 +44,10 @@ def get_path(address):
     return "\\".join(path[:-1]) + "\\"
 
 
-def get_youtube(link, dest=None):
+def get_youtube(link, dest=""):
     yt = YouTube(link)
-    t = yt.streams.filter(file_extension='mp4').first()
-    t.download(filename="youtube", output_path=dest)
+    t = yt.streams.filter(file_extension='mp4').all()
+    t[0].download(filename="youtube", output_path=dest)
     file = os.path.join(dest, "youtube.mp4")
     new = os.path.join(dest, "converted.wav")
     subprocess.call("ffmpeg -loglevel panic -i " + file + " -ac 1 -f wav " + new)

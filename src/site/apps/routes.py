@@ -17,7 +17,7 @@ from src.song import read
 from src.song import drum
 
 
-tools = {"piano": piano.piano_ver1,
+tools = {"piano": piano.piano,
          "drum": drum.drum_tool}
 
 
@@ -109,9 +109,16 @@ def results(user):
     userpath = os.path.join(app.config['UPLOAD_FOLDER'], user)
     currfile = os.listdir(userpath)[0]
     fileloc = os.path.join(userpath, currfile)
-    uploads = os.path.join(app.config['DOWNLOAD_FOLDER'], user)
+    downloads = os.path.join(app.config['DOWNLOAD_FOLDER'], user)
     func = tools[session["type"]]
-    func(fileloc, "pooo", user=userpath, sections=session["segmented"])
+
+    if len(os.listdir(downloads)) > 0:
+        files = os.listdir(downloads)
+        for file in files:
+            todel = os.path.join(downloads, file)
+            os.remove(todel)
+
+    func(fileloc, name=session["type"], user=downloads, sections=session["segmented"])
     session['bpm'] = 123213
     # def generate():
     #     session['bpm'] = beat.get_bpm(fileloc)
@@ -121,9 +128,9 @@ def results(user):
     #     time.sleep(1)
     #     yield '!'
     # sr, song = read(os.path.join(location))
-    if session.get("segmented"):
+    if session.get("segmented", None):
         session.pop("segmented")
-    if session.get("type"):
+    if session.get("type", None):
         session.pop("type")
     return render_template("results.html", wavpath=currfile)
 

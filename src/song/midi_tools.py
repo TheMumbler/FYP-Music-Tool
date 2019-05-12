@@ -47,7 +47,7 @@ def get_notes(spec):
     return notes
 
 
-def output_midi(name, notes, bpm, sr, hopsize=256, directory="testy"):
+def output_midi(name, notes, bpm, sr, hopsize=512, directory="testy"):
     """
     :param name: name of the output file
     :param notes: a dictionary with an entry for each midi note each containing the times of the notes being hit
@@ -83,7 +83,7 @@ def output_midi(name, notes, bpm, sr, hopsize=256, directory="testy"):
         MyMIDI.writeFile(output_file)
 
 
-def out_midi_drums(onsets, drums, bpm, sr, hopsize=512):
+def out_midi_drums(name, onsets, drums, bpm, sr, hopsize=512, directory="testy"):
     track = 0
     channel = 9
     time = 0  # In beats
@@ -98,7 +98,10 @@ def out_midi_drums(onsets, drums, bpm, sr, hopsize=512):
             pitch = drumMidi[drum]
             duration = 1
             MyMIDI.addNote(track, channel, pitch, start, duration, volume)
-    with open("drums.mid", "wb") as output_file:
+    output_path = directory
+    file = os.path.join(output_path, name + ".mid")
+    os.makedirs(os.path.dirname(file), exist_ok=True)
+    with open(file, "wb") as output_file:
         MyMIDI.writeFile(output_file)
 
 
