@@ -1,13 +1,13 @@
 from sklearn.externals import joblib
 from keras.models import load_model
 import numpy as np
-from sklearn.preprocessing import StandardScaler
-import keras
-from keras import models
-from keras import layers
+# from sklearn.preprocessing import StandardScaler
+# import keras
+# from keras import models
+# from keras import layers
 import librosa
 import os
-from song import midi_tools
+from src.song import midi_tools
 
 
 c = {0: "Clap",
@@ -53,7 +53,7 @@ def scale_features(feats):
     return trans
 
 
-def segment_song(song, sr, bpm=None):
+def drum_tool(song, sr, bpm=None, **kwargs):
     scaler = joblib.load(os.path.abspath("scaler.save"))
     model = load_model('drum_model.h5')
 

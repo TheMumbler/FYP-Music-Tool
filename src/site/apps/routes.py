@@ -14,6 +14,11 @@ from src.song import beat
 from librosa.beat import tempo
 from src.song import structure
 from src.song import read
+from src.song import drum
+
+
+tools = {"piano": piano.piano_ver1,
+         "drum": drum.drum_tool}
 
 
 @app.route('/')
@@ -61,11 +66,12 @@ def logout():
     return redirect(url_for('index'))
 
 
-@app.route('/tool', methods=['GET', 'POST'])
+@app.route('/tool/<type>', methods=['GET', 'POST'])
 @login_required
-def tool():
+def tool(type):
     form = AddFile()
     form2 = YouTubeLink()
+    session["type"] = type
     if request.method == "POST":
         user = current_user.username
         path = os.path.join(app.config['UPLOAD_FOLDER'], user)
@@ -88,13 +94,13 @@ def tool():
             read.get_youtube(link, path)
             return redirect(url_for('results', user=user))
 
-    return render_template("tool.html", user=current_user.username, fileform=form, youtubeform=form2)
+    return render_template("tool.html", type=type.title(), user=current_user.username, fileform=form, youtubeform=form2)
 
 
-@app.route('/tool', methods=['GET', 'POST'])
-@login_required
-def drumtool():
-    pass
+# @app.route('/tool', methods=['GET', 'POST'])
+# @login_required
+# def drumtool():
+#     pass
 
 
 @app.route('/<user>/results', methods=['GET', 'POST'])
@@ -104,17 +110,21 @@ def results(user):
     currfile = os.listdir(userpath)[0]
     fileloc = os.path.join(userpath, currfile)
     uploads = os.path.join(app.config['DOWNLOAD_FOLDER'], user)
-    # piano.piano_ver1(fileloc, "pooo", "wew", sections=session["segmented"])
+    func = tools[session["type"]]
+    func(fileloc, "pooo", user=userpath, sections=session["segmented"])
     session['bpm'] = 123213
-    def generate():
-        session['bpm'] = beat.get_bpm(fileloc)
-        yield render_template("results.html", wavpath=currfile)
-        time.sleep(1)
-        yield "ujj"
-        time.sleep(1)
-        yield '!'
+    # def generate():
+    #     session['bpm'] = beat.get_bpm(fileloc)
+    #     yield render_template("results.html", wavpath=currfile)
+    #     time.sleep(1)
+    #     yield "ujj"
+    #     time.sleep(1)
+    #     yield '!'
     # sr, song = read(os.path.join(location))
-    session.pop("segmented")
+    if session.get("segmented"):
+        session.pop("segmented")
+    if session.get("type"):
+        session.pop("type")
     return render_template("results.html", wavpath=currfile)
 
 

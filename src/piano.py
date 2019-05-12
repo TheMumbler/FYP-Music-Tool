@@ -35,7 +35,7 @@ from .song.spectral import octave_weak, non_zero_average_std
 
 #
 
-def piano_ver1(song, name, user, bpm=None, hp=False, sections=False):
+def piano_ver1(song, name, user, bpm=None, sections=False, **kwargs):
     # current peak pick for log_spec
     # avg = uniform_filter1d(abs(spect[:, frame]), 100)
     # peaks, _ = signal.find_peaks(abs(spect[:, frame]), height=avg, prominence=5)
@@ -79,7 +79,7 @@ def piano_ver1(song, name, user, bpm=None, hp=False, sections=False):
         log = median_filter(abs(log), size=(1, 8))
 
         notes = midi_tools.get_notes(log)
-        midi_tools.output_midi("testo"+str(i), notes, bpm, sr, hopsize=512, directory="Testy")
+        midi_tools.output_midi("piano"+str(i), notes, bpm, sr, hopsize=512, directory=user)
 
 
         i += 1
