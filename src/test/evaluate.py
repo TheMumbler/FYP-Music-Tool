@@ -41,20 +41,17 @@ with open('tidiedR.csv') as csv_file:
             line_count += 1
         else:
             result[row[0]] = int(row[1])+12
-            # print(f'\t{row[0]} works in the {row[1]})
             line_count += 1
 
 match = 0
-error = 50
+error = 70
 for key, item in oracle.items():
     for i in range(int(key)-error, int(key)+error):
         check = result.get(str(i), None)
         if check:
-            # print((check), type(item))
             if int(check) == int(item):
                 print("MATCH")
                 match += 1
-                # continue
 
 recall = match/len(oracle)
 precision = match/len(result)
