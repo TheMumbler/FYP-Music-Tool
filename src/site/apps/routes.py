@@ -111,7 +111,7 @@ def results(user):
     fileloc = os.path.join(userpath, currfile)
     downloads = os.path.join(app.config['DOWNLOAD_FOLDER'], user)
     func = tools[session["type"]]
-
+    os.makedirs(downloads, exist_ok=True)
     if len(os.listdir(downloads)) > 0:
         files = os.listdir(downloads)
         for file in files:

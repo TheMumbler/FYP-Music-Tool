@@ -81,6 +81,12 @@ def salience(spec, logged=True):
 
 
 def harmonic_summation(frame, peaks, weights, logged=True):
+    """
+    :param frame: a frame of your stft
+    :param peaks: the location of the peaks
+    :param weights: the weights for each harmonic
+    :param logged: where the spectrogram has been binned into midi bins
+    """
     for peak in peaks:
         harms = np.array(([peak]*4))
         if logged:

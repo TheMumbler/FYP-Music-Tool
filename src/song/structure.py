@@ -69,6 +69,13 @@ def find_segments(song, bpm, destination=None):
     mask[mask > 0] = 1
     dist = dist * mask
     lag = sim_to_lag(dist)
+
+    pic2 = os.path.join(destination, "lagtransform")
+    plt.pcolormesh(lag, cmap=plt.cm.get_cmap("Greys"))
+
+    plt.savefig(pic2, quality=95)
+    plt.close()
+
     energy = get_energy(lag)
     p, n = split_pos(energy)
 

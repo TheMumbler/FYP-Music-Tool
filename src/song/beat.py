@@ -15,7 +15,6 @@ def get_bpm(song):
     return bpm
 
 
-
 def half_w_rect(song):
     """Returns the half wave rectification of a song"""
     tes = song.copy()
