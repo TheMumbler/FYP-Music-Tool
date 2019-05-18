@@ -28,15 +28,9 @@ def test_home(client):
     assert response.status_code == 200
 
 
-def test_home_text(client):
-    """Test home page"""
-    response = client.get('/')
-    assert response.status_code == 200
-
-
 def test_tool_logged_out(client):
     """Check if user can use tool without being logged in"""
-    response = client.get('/tool')
+    response = client.get('/tool/piano')
     assert response.status_code == 302
 
 
@@ -63,7 +57,7 @@ def test_tool_logged_in(client):
     """Check access to tool after logging in"""
     response = login(client, "test", "test")
     assert response.status_code == 200
-    response = client.get('/tool', follow_redirects=True)
+    response = client.get('/tool/piano', follow_redirects=True)
     assert response.status_code == 200
 
 

@@ -42,5 +42,5 @@ def test_startend_np():
     assert type(after) is np.ndarray
 
 
-def test_get_youtube():
-    assert read.get_youtube("https://www.youtube.com/watch?v=kjlu9RRHcbE")
+# def test_get_youtube():
+#     assert read.get_youtube("https://www.youtube.com/watch?v=kjlu9RRHcbE")

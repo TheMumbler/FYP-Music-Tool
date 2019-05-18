@@ -45,14 +45,24 @@ with open('tidiedR.csv') as csv_file:
 
 match = 0
 error = 70
+ierror = 0
+matched = False
+
 for key, item in oracle.items():
+    if matched:
+        matched = False
+        continue
+    error = 30 + ierror
     for i in range(int(key)-error, int(key)+error):
         check = result.get(str(i), None)
         if check:
             if int(check) == int(item):
                 print("MATCH")
                 match += 1
-
+                matched = True
+                break
+    ierror += 3
+# 2389
 recall = match/len(oracle)
 precision = match/len(result)
 fscore = 2*((precision*recall)/(precision+recall))
