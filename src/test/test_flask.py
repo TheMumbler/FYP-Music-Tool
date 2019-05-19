@@ -77,7 +77,6 @@ def test_invalid_email(client):
 
 def test_valid_user_registration(client):
     """Test account registration"""
-    # TODO: Fix this response data
     response = register(client, 'test', 'test@test.com', 'testing', 'testing')
     assert response.status_code == 200
     assert b'Congratulations, you are now a registered user!' in response.data

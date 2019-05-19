@@ -2,14 +2,11 @@ from scipy import signal
 import numpy as np
 from .utils import freq_to_bucket, select_peaks
 import matplotlib.pyplot as plt
-from scipy.ndimage import maximum_filter
-from scipy.ndimage import median_filter
 from scipy.ndimage.filters import uniform_filter1d
 import math
 
 
 # def my_stft(song, w="hann", win_len=2048, hop_size=128):
-#     # TODO: Too inefficient
 #     w = signal.get_window(w, win_len)
 #     short = np.zeros(shape=(4097, (len(song) - win_len) // hop_size), dtype=complex)
 #     for i in range(0, len(song) - win_len, hop_size):
@@ -20,7 +17,6 @@ import math
 
 
 # def refined_log_freq_spec(spect, bins=128, nfft=8192):
-#     # TODO: This function breaks if freq_to_buckets cents is set to anything small as it tries to get negative index
 #     song_length = len(spect[0])
 #     new_full = np.zeros(shape=(bins, song_length))
 #     for index in range(1, len(spect)):
@@ -31,11 +27,9 @@ import math
 
 
 def log_spec(spect, bins=128, nfft=8192, sr=44100):
-    # TODO: help, wont use this for now but will come back to it
     song_length = len(spect[0])
     new_full = np.zeros(shape=(bins, song_length))
     for frame in range(1, len(spect.T)):
-        # peaks, _ = signal.find_peaks(spect[:, frame], prominence=5)
         avg = uniform_filter1d(abs(spect[:, frame]), 100)
         peaks, _ = signal.find_peaks(abs(spect[:, frame]), height=avg, prominence=5)
         # peaks, _ = signal.find_peaks(abs(spect[:, frame]), height=np.mean(abs(spect[:, frame])), prominence=avg)
@@ -101,7 +95,6 @@ def harmonic_summation(frame, peaks, weights, logged=True):
 
 
 def chromagram(logspec):
-    # TODO: Allow this to take the last 8 notes it is missing at the top
     chroma = np.zeros(shape=(12, len(logspec[0])))
     for i in range(0, len(logspec), 12):
         try:
@@ -118,11 +111,6 @@ def display(spec, text="STFT", color='Greys'):
     # plt.ylabel('Frequency ')
     # plt.xlabel('Time ')
     plt.show()
-
-
-def deltaphi(spec, lastphs):
-    # TODO: Add this from book
-    math.atan2()
 
 
 def octave_weak(frame):

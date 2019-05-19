@@ -14,9 +14,7 @@
 
     {% endif %}
 
-    <a href="{{ url_for('tool', type='piano') }}">
-       <input type="button" value="New Search" />
-    </a>
+
 
     <script>
         var wavesurfer = WaveSurfer.create({
@@ -27,6 +25,18 @@
         wavesurfer.load("{{ url_for('download', user=current_user.username, filename=wavpath) }}");
 
     </script>
+    <div>
+        {%for file in file_list%}
 
+            <li><a href="{{ url_for('downloadMidi', user=user.username, filename=file) }}"> {{file}} </></li>
+        {%endfor%}
+
+    </div>
+
+    <div>
+        <a href="{{ url_for('tool', type='piano') }}">
+            <input type="button" value="New Search" />
+        </a>
+    </div>
 {% endblock %}
 

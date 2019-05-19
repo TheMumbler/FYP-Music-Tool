@@ -15,11 +15,12 @@ from librosa.beat import tempo
 from src.song import structure
 from src.song import read
 from src.song import drum
-from src.song import utils
+from src import fullsong
 
 
 tools = {"piano": piano.piano,
-         "drum": drum.drum_tool}
+         "drum": drum.drum_tool,
+         "song": fullsong.harmpercsplit}
 
 
 @app.route('/')
@@ -120,11 +121,12 @@ def results(user):
             os.remove(todel)
 
     func(fileloc, name=session["type"], user=downloads, sections=session["segmented"])
-    utils.zipFiles(downloads, session["type"])
-    # session['bpm'] = 123213
-    # def generate():
-    session['bpm'] = str(beat.get_bpm(fileloc))[:5]
+    # utils.zipFiles(downloads, session["type"])
 
+
+    session['bpm'] = str(beat.get_bpm(fileloc))[:5]
+    files = [x for x in os.listdir(downloads)]
+    files = sorted(files)
     #     yield render_template("results.html", wavpath=currfile)
     #     time.sleep(1)
     #     yield "ujj"
@@ -135,7 +137,7 @@ def results(user):
         session.pop("segmented")
     if session.get("type", None):
         session.pop("type")
-    return render_template("results.html", wavpath=currfile)
+    return render_template("results.html", wavpath=currfile, user=current_user, file_list=files)
 
 
 @app.route('/<user>/<path:filename>', methods=['GET', 'POST'])
@@ -145,7 +147,7 @@ def download(user, filename):
     return send_from_directory(directory=uploads, filename=filename)
 
 
-@app.route('/<user>/<path:filename>', methods=['GET', 'POST'])
+@app.route('/midi/<user>/<path:filename>', methods=['GET', 'POST'])
 def downloadMidi(user, filename):
     uploads = os.path.join(app.config['DOWNLOAD_FOLDER'], user)
     print(uploads, "DOWNLOADS")

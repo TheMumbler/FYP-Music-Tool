@@ -68,25 +68,6 @@ def log_compression(spect, y=1):
     return spect
 
 
-# def bucket_size():
-#     # TODO: Maybe try remove this
-#     for i in np.arange(11.5, 108.5, 1):  # Maybe change 11.5 to zero?
-#         yield int(i+.5), midi_to_pitch(i), midi_to_pitch(i+1)
-#
-#
-# def log_freq_spec(spect):
-#     # TODO: Reduce complexity in this here pal
-#     song_length = len(spect[0])
-#     new_full = np.empty(shape=(109, song_length))
-#     for new_i, left, right in bucket_size():
-#         new = np.zeros(song_length)
-#         for index in range(len(spect)):
-#             if left < index < right:
-#                 new = new + spect[index]
-#         new_full[new_i] = new
-#     return new_full
-
-
 def freq_to_bucket(freq, cents=100, ref=8.66, nfft=8192, sr=44100):
     """
     Takes a frequency coefficient and a reference for the lowest bucket, default is C0, and returns the relative bucket
@@ -145,8 +126,8 @@ def zipFiles(user, type):
     toZip = []
     for file in os.listdir(user):
         if type in file:
-            # toZip.append(os.path.join(user, file))
-            toZip.append(file)
+            toZip.append(os.path.join(user, file))
+            # toZip.append(file)
     zname = os.path.basename(os.path.dirname(user))
     path = os.path.join(user, zname+type+'.zip')
     with ZipFile(path, 'w') as zip:

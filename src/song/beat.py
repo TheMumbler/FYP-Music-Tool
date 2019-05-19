@@ -40,8 +40,6 @@ def e_novelty(song, window="hann", win_len=2048, hop_size=512):
 
 
 def log_e_novelty(song, window="hann", win_len=1024, hop_size=256):
-    # TODO: Merge these functions into one with log option
-    # TODO: Fix the log
     energy = np.empty(shape=len(song)-1)
     w = signal.get_window(window, win_len)
     hwr = half_w_rect(song)
@@ -61,8 +59,6 @@ def moving_average(data_set, periods=3):
 
 
 def spec_novelty(song, window="hann", win_len=2048, hop_size=256, spec=False):
-    # TODO: Add average
-    # TODO: Fix issue with last few frames
     # Compute STFT
 
     if not spec:

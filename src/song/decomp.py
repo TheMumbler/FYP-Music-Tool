@@ -5,7 +5,6 @@ from .utils import magphase
 
 def hpss(spec, pow=1, soft=True, ksize=32):
     """Split the wave into harmonic and percussive"""
-    # TODO: Add option of binary masking instead of soft masking
     if np.iscomplexobj(spec):
         spec, phase = magphase(spec)
     else:
