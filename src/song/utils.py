@@ -1,6 +1,8 @@
 from math import floor, log2
 import numpy as np
 from scipy import signal
+import os
+from zipfile import ZipFile
 
 
 def time_coef(frame, hop_size, sr):
@@ -137,3 +139,17 @@ def beats_to_frames(beat, bpm, hop_size, sr):
     samples = 60/bpm * sr
     frames = samples / hop_size
     return floor(frames * beat)
+
+
+def zipFiles(user, type):
+    toZip = []
+    for file in os.listdir(user):
+        if type in file:
+            # toZip.append(os.path.join(user, file))
+            toZip.append(file)
+    zname = os.path.basename(os.path.dirname(user))
+    path = os.path.join(user, zname+type+'.zip')
+    with ZipFile(path, 'w') as zip:
+        for file in toZip:
+            zip.write(file)
+

@@ -7,8 +7,10 @@ import numpy as np
 # from keras import layers
 import librosa
 import os
-from src.song import midi_tools
-from src.song import read
+from . import midi_tools
+from . import read
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 
 c = {0: "Clap",
@@ -54,7 +56,7 @@ def scale_features(feats):
     return trans
 
 
-def drum_tool(song, name, bpm=None, **kwargs):
+def drum_tool(song, name, user, bpm=None, **kwargs):
     sr, song = read.read(song)
     song = song * 1.0
     scaler = joblib.load(os.path.abspath("scaler.save"))
@@ -74,7 +76,7 @@ def drum_tool(song, name, bpm=None, **kwargs):
         segments[i] = extract_feats(segments[i], sr)
     trans = scaler.transform(np.array(segments))
 
-    predictions = (model.predict_proba(trans))
+    predictions = (model.predict(trans))
 
     classes = []
     for prediction in predictions:
@@ -82,11 +84,14 @@ def drum_tool(song, name, bpm=None, **kwargs):
         #     highs =(np.argsort(prediction[prediction > .0]))
         #     highest = (c[np.argmax(prediction)])
         #     classes.append([c[x] for x in highs] )
-        highest = np.argmax(prediction)
-        classes.append(c[highest])
+        print(prediction)
+        classes.append(c[np.argmax(prediction)])
+        # highest = np.argmax(prediction)
+        # classes.append(c[highest])
     newclasses = [[x] for x in classes]
+    print(newclasses)
 
     if not bpm:
         bpm = librosa.beat.tempo(song)[0]
 
-    midi_tools.out_midi_drums(name, onset_frames, newclasses, bpm, sr)
+    midi_tools.out_midi_drums(name=name, onsets=onset_frames, drums=newclasses, bpm=bpm, sr=sr, directory=user)

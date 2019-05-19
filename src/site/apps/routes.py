@@ -15,6 +15,7 @@ from librosa.beat import tempo
 from src.song import structure
 from src.song import read
 from src.song import drum
+from src.song import utils
 
 
 tools = {"piano": piano.piano,
@@ -119,9 +120,11 @@ def results(user):
             os.remove(todel)
 
     func(fileloc, name=session["type"], user=downloads, sections=session["segmented"])
-    session['bpm'] = 123213
+    utils.zipFiles(downloads, session["type"])
+    # session['bpm'] = 123213
     # def generate():
-    #     session['bpm'] = beat.get_bpm(fileloc)
+    session['bpm'] = str(beat.get_bpm(fileloc))[:5]
+
     #     yield render_template("results.html", wavpath=currfile)
     #     time.sleep(1)
     #     yield "ujj"

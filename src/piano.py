@@ -12,28 +12,6 @@ from zipfile import ZipFile
 import os
 from .song.spectral import octave_weak, non_zero_average_std
 
-# print("done importing")
-#
-#
-# print("reading file")
-# # sr, song = read.read('../Songs/fur_elise.wav')
-# sr, song = read.read('../Songs/river_flows_in_you.wav')
-# # sr, song = read.read('../Songs/deadmau5.wav')
-# # sr, song = read.read('../Songs/crab.wav')
-# # sr, song = read.read('../Songs/billie.wav')
-# # sr, song = read.read('../Songs/hungarian.wav')
-# song = song*1.0
-#
-#
-# weights = [1.0, 0.5, 0.33, 0.25]
-#
-
-
-# _, _, x = signal.stft(song, nperseg=2048, nfft=8192, noverlap=1792)
-#
-# x, _ = utils.magphase(x, mag_only=True)
-
-#
 
 def piano(song, name, user, bpm=None, sections=False, **kwargs):
     # current peak pick for log_spec
@@ -80,7 +58,5 @@ def piano(song, name, user, bpm=None, sections=False, **kwargs):
 
         notes = midi_tools.get_notes(log)
         midi_tools.output_midi("piano"+str(i), notes, bpm, sr, hopsize=512, directory=user)
-
-
         i += 1
 
