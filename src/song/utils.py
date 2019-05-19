@@ -152,4 +152,5 @@ def zipFiles(user, type):
     with ZipFile(path, 'w') as zip:
         for file in toZip:
             zip.write(file)
+            print("sda")
 
